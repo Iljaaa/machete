@@ -1,0 +1,20 @@
+{
+    "name": "iljaaa/machete",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "iljaaa\\machete\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ilja"
+        }
+    ],
+    "require": {
+        "php": "=7.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
