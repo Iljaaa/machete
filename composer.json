@@ -11,6 +11,7 @@
             "name": "Ilja"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "php": "=7.4.0"
     },

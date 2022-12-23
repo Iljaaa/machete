@@ -3,7 +3,7 @@ version: "3.7"
 services:
   php-cli:
     build:
-      context: ./php
+      context: ./docker/php
       dockerfile: Dockerfile
     volumes:
-      - ../:/composer-package
+      - ./:/composer-package
