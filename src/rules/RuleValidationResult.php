@@ -22,11 +22,13 @@ class RuleValidationResult
 
     /**
      * @param string|null $error
+     * @return RuleValidationResult
      */
-    public function addError (?string $error): void
+    public function addError (?string $error): RuleValidationResult
     {
         $this->isValid = false;
         $this->errors[] = $error;
+        return $this;
     }
 
     /**

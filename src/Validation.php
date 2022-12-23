@@ -4,6 +4,7 @@ namespace Iljaaa\Machete;
 
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\AttributeRule;
+use Iljaaa\Machete\rules\CallableRule;
 use Iljaaa\Machete\rules\Rule;
 use Iljaaa\Machete\rules\RulesCollection;
 
@@ -13,7 +14,7 @@ use Iljaaa\Machete\rules\RulesCollection;
  * file for extend
  * class MySuperValidator extents
  *
- * @version 0.0.3
+ * @version 1.1.2
  */
 abstract class Validation
 {
@@ -22,11 +23,6 @@ abstract class Validation
      * @var array
      */
     protected array $data = [];
-
-    /**
-     * @var array
-     */
-    private $errors = [];
 
     /**
      * Is data valid
@@ -104,7 +100,11 @@ abstract class Validation
      */
     private function getValue ($name)
     {
-        return $this->{$name};
+        if (property_exists($this, $name)) {
+            return $this->{$name};
+        }
+
+        return $this->data[$name] ?? null;
     }
 
     /**
@@ -156,16 +156,22 @@ abstract class Validation
         foreach ($rules as $ruleConfig)
         {
             // make attributes array
-            $attributes = static::makeFieldsArrayFromRuleConfig($ruleConfig);
+            $attributes = static::makeAttributesArrayFromRuleConfig($ruleConfig);
 
-            // make role validator
-            $roleValidator = Rule::makeRuleFromArray($ruleConfig);
+            foreach ($attributes as $attr)
+            {
+                // make role validator
+                $roleValidator = Rule::makeRuleFromArray($ruleConfig);
 
-            foreach ($attributes as $a) {
-                $collection->add(new AttributeRule($a, $roleValidator));
+                // if is callable we need additional add field name
+                // for the pas it in callback function
+                if ($roleValidator instanceof CallableRule) {
+                    $roleValidator->setFormFieldName($attr);
+                }
+
+                //
+                $collection->add(new AttributeRule($attr, $roleValidator));
             }
-
-
         }
 
         return $collection;
@@ -177,7 +183,7 @@ abstract class Validation
      * @return void
      * @throws ValidationException
      */
-    private static function makeFieldsArrayFromRuleConfig (array $ruleConfig): array
+    private static function makeAttributesArrayFromRuleConfig (array $ruleConfig): array
     {
         if (empty($ruleConfig[0])) {
             throw new ValidationException("Rule data have not attribute description");
@@ -193,7 +199,7 @@ abstract class Validation
 
     /**
      * @param string $field filed name for validate
-     * @param \Rule $rule
+     * @param Rule $rule
      * @return ValidationResult
      */
     private function validateField(string $field,  $rule)
@@ -207,9 +213,6 @@ abstract class Validation
             $result = call_user_func([$this, $validatator], $value, $field, $rule);
             return (new ValidationResult())->setResult($result);
         }
-
-        // parse short name validators
-        $class = $this->getAssociateClass($validatator);
 
         // manual load class
         if (!class_exists($validatator, false)) {

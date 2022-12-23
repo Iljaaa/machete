@@ -36,3 +36,15 @@ callable - ?
 associated array - ?
 array - ?
 
+Self validation functions
+
+Second paramether can be callable
+like this
+['name', function () {}]
+
+or
+['name', fn () => true]
+
+All what can pass is_callable function
+this callable object be call with params
+($value, string $attribute, Role $role)

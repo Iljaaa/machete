@@ -82,6 +82,11 @@ abstract class Rule
             return $r;
         }
 
+        // callable object
+        elseif (is_callable($rule)) {
+            return new CallableRule($rule, $ruleConfig);
+        }
+
         throw new ValidationException("Unknown rule format");
     }
 

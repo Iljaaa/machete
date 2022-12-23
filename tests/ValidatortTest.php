@@ -72,12 +72,75 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
          };
 
          $this->assertFalse($validator->isValid(), 'start is isValid flag is wrong');
-
          $this->assertTrue($validator->validate(), "class is not valid");
          $this->assertTrue($validator->isValid(), 'after validate isValid is wrong');
 
          $this->assertNull($validator->getFirstErrorForField('name'), 'error of name mast by null');
          // $this->assertEquals('Short field to long', $validator->getFirstErrorForField('shortString'));
+    }
+
+
+
+    /**
+     *
+     *
+     * @throws ValidationException
+     */
+     public function testLoadParams ()
+     {
+         $validator = new class extends \Iljaaa\Machete\Validation
+         {
+             public function rules(): array
+             {
+                 return [
+                     [['name'], 'string', 'min' => 7],
+                     // [['shortString'], 'string', 'max' => 3, 'toLong' => 'Short field to long'],
+                     // [['validString'], 'string', 'min' => 3, 'max' => 6],
+                 ];
+             }
+         };
+
+         $validator->load(['name' => 'asdfasdfasf']);
+
+         $this->assertFalse($validator->isValid(), 'start is isValid flag is wrong');
+         $this->assertTrue($validator->validate(), "class is not valid");
+         $this->assertTrue($validator->isValid(), 'after validate isValid is wrong');
+
+         $this->assertNull($validator->getFirstErrorForField('name'), 'error of name mast by null');
+         // $this->assertEquals('Short field to long', $validator->getFirstErrorForField('shortString'));
+    }
+
+    public function testCallable()
+    {
+
+        $validator = new class extends \Iljaaa\Machete\Validation
+        {
+            public string $name = 'sdkjasasdasd';
+
+            public function rules(): array
+            {
+                return [
+                    [['name'], 'string', 'min' => 7],
+                    [['name'], [$this, 'nonStaticValidateMethod']],
+                    [['name'], [ValidatorTest::class, 'functionForTestStaticCall']]
+                    // [['shortString'], 'string', 'max' => 3, 'toLong' => 'Short field to long'],
+                    // [['validString'], 'string', 'min' => 3, 'max' => 6],
+                ];
+            }
+
+            public function nonStaticValidateMethod($value, string $field, \Iljaaa\Machete\rules\Rule $r): bool {
+                return true;
+            }
+        };
+
+        $this->assertFalse($validator->isValid(), 'start is isValid flag is wrong');
+        $this->assertTrue($validator->validate(), "class is not valid");
+        $this->assertTrue($validator->isValid(), 'start is isValid flag is wrong');
+
+    }
+
+    public static function functionForTestStaticCall(): bool {
+        return true;
     }
 
     /**
