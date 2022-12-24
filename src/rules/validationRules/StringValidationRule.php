@@ -1,12 +1,14 @@
 <?php
 
-namespace Iljaaa\Machete\rules;
+namespace Iljaaa\Machete\rules\validationRules;
+
+use Iljaaa\Machete\rules\Rule;
 
 /**
  * Strings validation
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @package Iljaaa\Machete
  */
 class StringValidationRule extends Rule
@@ -17,12 +19,11 @@ class StringValidationRule extends Rule
      */
     private ?int $min = null, $max = null;
 
-
     /**
      * Basic error messages
      * @var string
      */
-    private string $wrongTypeMessage = 'Is is not a string';
+    private string $wrongType = "It's not a string";
     private string $toShort = 'To short';
     private string $toLong = 'To long';
 
@@ -36,7 +37,7 @@ class StringValidationRule extends Rule
         if (!empty($config['min'])) $this->min = (int) $config['min'];
         if (!empty($config['max'])) $this->max = (int) $config['max'];
 
-        if (!empty($config['wrongTypeMessage'])) $this->wrongTypeMessage = $config['wrongTypeMessage'];
+        if (!empty($config['wrongType'])) $this->wrongType = $config['wrongType'];
         if (!empty($config['toShort'])) $this->toShort = $config['toShort'];
         if (!empty($config['toLong'])) $this->toLong = $config['toLong'];
     }
@@ -45,7 +46,7 @@ class StringValidationRule extends Rule
     public function validate($value): bool
     {
         if (!is_string($value)) {
-            $this->validationResult->addError($this->wrongTypeMessage);
+            $this->validationResult->addError($this->wrongType);
             return false;
         }
 

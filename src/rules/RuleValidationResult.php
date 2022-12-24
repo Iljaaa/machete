@@ -4,6 +4,11 @@ namespace Iljaaa\Machete\rules;
 
 /**
  * One rule validation result
+ *
+ * @author ilja <the.ilja@gmail.com>
+ * @version 1.0.0
+ * @package Iljaaa\Machete
+ * @see https://github.com/Iljaaa/machete
  */
 class RuleValidationResult
 {

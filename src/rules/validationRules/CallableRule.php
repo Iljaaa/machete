@@ -1,11 +1,13 @@
 <?php
 
-namespace Iljaaa\Machete\rules;
+namespace Iljaaa\Machete\rules\validationRules;
+
+use Iljaaa\Machete\rules\Rule;
 
 /**
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @package Iljaaa\Machete
  */
 class CallableRule extends Rule

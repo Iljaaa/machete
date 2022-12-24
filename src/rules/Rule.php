@@ -3,11 +3,17 @@
 namespace Iljaaa\Machete\rules;
 
 use Iljaaa\Machete\exceptions\ValidationException;
-use Iljaaa\Machete\ValidationResult;
+use Iljaaa\Machete\rules\validationRules\CallableRule;
+use Iljaaa\Machete\rules\validationRules\RequiredValidationRule;
+use Iljaaa\Machete\rules\validationRules\StringValidationRule;
 
 /**
  * Extends for validate one rule
- * @version 0.0.1
+ *
+ * @author ilja <the.ilja@gmail.com>
+ * @version 1.0.1
+ * @package Iljaaa\Machete
+ * @see https://github.com/Iljaaa/machete
  */
 abstract class Rule
 {
@@ -28,15 +34,26 @@ abstract class Rule
     /**
      * Run value validation
      * @param mixed $value
-     * @param bool $stopOnFirst stop on first found error
      * @return bool
      */
     public abstract function validate ($value): bool;
 
     /**
+     * Add error and set valid result to false
+     * @param string $error
+     * @return $this
+     */
+    public function addError(string $error): Rule
+    {
+        $this->validationResult->addError($error);
+        return $this;
+    }
+
+    /**
      * @return bool
      */
-    public function isValid(): bool {
+    public function isValid(): bool
+    {
         return $this->validationResult->isValid();
     }
 
@@ -98,8 +115,8 @@ abstract class Rule
     {
         switch ($rule) {
             case 'string'   : return new StringValidationRule($ruleConfig);
-            case 'required' : return new RequiredValidation($ruleConfig);
-            case 'number'   : return new RequiredValidation($ruleConfig);
+            case 'required' : return new RequiredValidationRule($ruleConfig);
+            case 'number'   : return new RequiredValidationRule($ruleConfig);
         }
 
         return null;

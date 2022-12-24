@@ -4,9 +4,9 @@ namespace Iljaaa\Machete;
 
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\AttributeRule;
-use Iljaaa\Machete\rules\CallableRule;
 use Iljaaa\Machete\rules\Rule;
 use Iljaaa\Machete\rules\RulesCollection;
+use Iljaaa\Machete\rules\validationRules\CallableRule;
 
 /**
  * Its validation
@@ -14,7 +14,7 @@ use Iljaaa\Machete\rules\RulesCollection;
  * file for extend
  * class MySuperValidator extents
  *
- * @version 1.1.2
+ * @version 1.1.3
  */
 abstract class Validation
 {
@@ -25,10 +25,14 @@ abstract class Validation
     protected array $data = [];
 
     /**
-     * Is data valid
-     * @var bool
+     * @var ValidationResult
      */
-    private bool $isValid = false;
+    private ValidationResult $result;
+
+    public function __construct ()
+    {
+        $this->result = new ValidationResult();
+    }
 
     /**
      * Rules array
@@ -36,13 +40,15 @@ abstract class Validation
      */
     abstract public function rules(): array;
 
+
+
     /**
      * Is data valid
      * @return bool
      */
     public function isValid(): bool
     {
-        return $this->isValid;
+        return $this->result->isValid();
     }
 
     /**
@@ -119,7 +125,8 @@ abstract class Validation
      */
     public function validate(array $fieldsForValidate = []) : bool
     {
-        $this->isValid = true;
+        // drop result to true
+        $this->result->clearBeforeValidate();
 
         // wrap rules in objects
         $rulesCollection = static::makeRulesCollection($this->rules());
@@ -131,19 +138,66 @@ abstract class Validation
             $value = $this->getValue($aRule->getAttribute());
 
             // validation one field
-            $result = $aRule->getRule()->validate($value);
-
-            if (!$result) {
-                $this->isValid = false;
+            if ($aRule->getRule()->validate($value) == false) {
+                $this->result->setIsValid(false);
             }
-
         }
 
-        return $this->isValid;
+        // sava validated rules in result
+        $this->result->setRulesCollection($rulesCollection);
+
+        return $this->result->isValid();
+    }
+
+    /**
+     * Return array of error messages grouped by field
+     * @return void
+     */
+    public function getErrors(): array
+    {
+        return $this->result->getErrors();
+    }
+
+    /**
+     * Get first error
+     * @return string
+     */
+    public function getFirstError(): string
+    {
+        return $this->result->getFirstError();
+    }
+
+    /**
+     * Get errors array fro attribute
+     * @param string $attribute
+     * @return array
+     */
+    public function getErrorsForAttribute(string $attribute): array
+    {
+        return $this->result->getErrorsForAttribute($attribute);
+    }
+
+    /**
+     * @param string $attribute
+     * @return string
+     */
+    public function getFirstErrorForAttribute (string $attribute): string
+    {
+        return $this->result->getFirstErrorForAttribute($attribute);
+    }
+
+    /**
+     * @param string $attribute
+     * @return bool
+     */
+    public function isAttributeValid (string $attribute): bool
+    {
+        return $this->result->isAttributeValid($attribute);
     }
 
     /**
      * Make rules collection for validate
+     * todo: move to collection
      * @param array $rules
      * @return RulesCollection
      * @throws ValidationException
@@ -197,107 +251,4 @@ abstract class Validation
         throw new ValidationException("Unknown field description");
     }
 
-    /**
-     * @param string $field filed name for validate
-     * @param Rule $rule
-     * @return ValidationResult
-     */
-    private function validateField(string $field,  $rule)
-    {
-        $validatator = $rule[1];
-
-        $value = $this->getValue($field);
-
-        // check is validator is method of class
-        if (method_exists($this, $validatator)) {
-            $result = call_user_func([$this, $validatator], $value, $field, $rule);
-            return (new ValidationResult())->setResult($result);
-        }
-
-        // manual load class
-        if (!class_exists($validatator, false)) {
-            $a = 3;
-        }
-
-        /** @var Validation $v */
-        $v = new $class;
-        return $v->validate($field, $value, $rule);
-    }
-
-    /**
-     * @param string $field
-     * @param string $error
-     * @return void
-     */
-    public function addError ($field, $error)
-    {
-        if (!isset($this->errors[$field])) $this->errors[$field] = [];
-        $this->errors[$field][] = $error;
-    }
-
-    /**
-     * @return array
-     */
-    public function getErrors (){
-        return $this->errors;
-    }
-
-    /**
-     * @return void|null
-     */
-    public function getFirstError ()
-    {
-        if (empty($this->errors)) return null;
-        $errors = $this->errors[array_key_first($this->errors)];
-        if (empty($errors)) return null;
-        return $errors[array_key_first($errors)];
-    }
-
-    /**
-     * @param string $field
-     * @return array
-     */
-    public function getErrorsForField ($field) {
-        return (!empty($this->errors[$field])) ? $this->errors[$field] : [];
-    }
-
-    /**
-     * @param $field
-     * @return void
-     */
-    public function getFirstErrorForField ($field){
-        if (empty($this->errors[$field])) return null;
-        return $this->errors[$field][array_key_first($this->errors[$field])];
-    }
-
-}
-
-class ValidationResult
-{
-    /**
-     * @var bool
-     */
-    public $result = false;
-    /**
-     * @var string
-     */
-    public $error = '';
-
-    /**
-     * @param bool
-     * @return ValidationResult
-     */
-    public function setResult ($result) {
-        $this->result = $result;
-        return $this;
-    }
-
-    /**
-     * @param string
-     * @return ValidationResult
-     */
-    public function setError ($error) {
-        $this->error = $error;
-        return $this;
-    }
 }

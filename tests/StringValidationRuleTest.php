@@ -1,9 +1,14 @@
 <?php
 
-use Iljaaa\Machete\rules\StringValidationRule;
+use Iljaaa\Machete\rules\validationRules\StringValidationRule;
 
 /**
  * Test string component
+ *
+ * @author ilja <the.ilja@gmail.com>
+ * @version 1.0.1
+ * @package Iljaaa\Machete
+ * @see https://github.com/Iljaaa/machete
  */
 class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,16 +32,16 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('Is is not a string', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['Is is not a string'], $rule->getErrors(), 'Wrong errors array');
+        $this->assertEquals("It's not a string", $rule->getFirstError(), 'Wrong first error');
+        $this->assertEquals(['It\'s not a string'], $rule->getErrors(), 'Wrong errors array');
 
-        $rule = new StringValidationRule(['wrongTypeMessage' => 'wrong type error message']);
+        // override
+        $rule = new StringValidationRule(['wrongType' => 'wrong type error message']);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertEquals('wrong type error message', $rule->getFirstError(), 'Wrong first error');
         $this->assertEquals(['wrong type error message'], $rule->getErrors(), 'Wrong errors array');
-
 
         // default message
         $rule = new StringValidationRule(['max' => 10]);
