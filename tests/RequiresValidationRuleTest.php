@@ -72,12 +72,28 @@ class RequiresValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('It\'s required', $rule->getFirstError(), 'Wrong first error');
         $this->assertEquals(['It\'s required'], $rule->getErrors(), 'Wrong errors array');
 
-        $rule = new RequiredValidationRule(['message' => 'required test message']);
+        $rule = (new RequiredValidationRule())->setMessage('required test message');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertEquals('required test message', $rule->getFirstError(), 'Wrong first error');
         $this->assertEquals(['required test message'], $rule->getErrors(), 'Wrong errors array');
+
+        $rule = RequiredValidationRule::selfCreateFromValidatorConfig(['message' => 'required test message2']);
+        $this->assertFalse($rule->isValid(), 'wrong result');
+        $this->assertFalse($rule->validate([]), 'wrong result');
+        $this->assertFalse($rule->isValid(), 'wrong result');
+        $this->assertEquals('required test message2', $rule->getFirstError(), 'Wrong first error');
+        $this->assertEquals(['required test message2'], $rule->getErrors(), 'Wrong errors array');
+
+        $rule = RequiredValidationRule::selfCreateFromValidatorConfig(['message' => 'required test message2'])
+            ->setMessage('required second test message');
+
+        $this->assertFalse($rule->isValid(), 'wrong result');
+        $this->assertFalse($rule->validate([]), 'wrong result');
+        $this->assertFalse($rule->isValid(), 'wrong result');
+        $this->assertEquals('required second test message', $rule->getFirstError(), 'Wrong first error');
+        $this->assertEquals(['required second test message'], $rule->getErrors(), 'Wrong errors array');
     }
 
 }

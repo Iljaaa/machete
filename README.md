@@ -67,6 +67,25 @@ string additional params
 | toShort   | string |                                          | To short           |
 | toLong    | string |                                          | To long            |
 
+int
+==
+```php
+['attribute',  'float', ....]
+```
+| Param     | type   | Are                                      | Default            |
+|-----------|--------|:-----------------------------------------|:-------------------|
+| min       | int    | minimum string length for check          | null               |
+| min       | int    | maximum string                           | null               |
+| wrongType | string |                                          |                    |
+| toSmall   | string |                                          | To short           |
+| toBig     | string |                                          | To long            |
+
+float
+==
+```php
+['attribute',  'float', ....]
+```
+
 in
 ==
 synthesis of config array

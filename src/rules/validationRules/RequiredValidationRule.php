@@ -22,14 +22,6 @@ class RequiredValidationRule extends Rule
 
     /**
      * @param array $config
-     */
-    public function __construct ()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * @param array $config
      * @return RequiredValidationRule
      */
     public static function selfCreateFromValidatorConfig(array $config): RequiredValidationRule
