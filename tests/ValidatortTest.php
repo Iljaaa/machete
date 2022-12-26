@@ -148,6 +148,11 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
     }
 
+    /**
+     * Test returned errors
+     * @return void
+     * @throws ValidationException
+     */
     public function testReturnErrorsTest ()
     {
         $validator = new class extends \Iljaaa\Machete\Validation
@@ -192,6 +197,42 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $attributeFirstError = $validator->getFirstErrorForAttribute('name');
         $this->assertIsString($attributeFirstError, 'errors must be array');
         $this->assertNotEmpty($attributeFirstError, 'error is empty');
+    }
+
+    public function testValidatePartsOfFields ()
+    {
+        $validator = new class extends \Iljaaa\Machete\Validation
+        {
+            public string $name = 'name';
+            public string $value = '';
+
+            public function rules(): array
+            {
+                return [
+                    [['name'], 'required', 'message' => 'name to short'],
+                    [['value'], 'required'],
+                    [['value2'], 'required'],
+                ];
+            }
+        };
+
+        $result = $validator->validate(['name']);
+        $this->assertTrue($result);
+
+        $result = $validator->validate(['value']);
+        $this->assertFalse($result);
+        $this->assertCount(1, $validator->getErrors());
+
+        $result = $validator->validate(['value2']);
+        $this->assertFalse($result);
+        $this->assertCount(1, $validator->getErrors());
+
+        $result = $validator->validate(['name']);
+        $this->assertTrue($result);
+        $this->assertEmpty($validator->getErrors());
+
+        $this->expectException(ValidationException::class);
+        $validator->validate(['valuesdlfjblsdkbf']);
     }
 
     /**

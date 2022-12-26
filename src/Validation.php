@@ -14,7 +14,7 @@ use Iljaaa\Machete\rules\validationRules\CallableRule;
  * file for extend
  * class MySuperValidator extents
  *
- * @version 1.1.3
+ * @version 1.1.4
  */
 abstract class Validation
 {
@@ -39,8 +39,6 @@ abstract class Validation
      * @return array
      */
     abstract public function rules(): array;
-
-
 
     /**
      * Is data valid
@@ -118,12 +116,12 @@ abstract class Validation
      *
      * fields array for validate
      * like ['phone', 'name', 'email']
-     * @param string[] $fieldsForValidate
+     * @param null|string[] $attributesForValidate
      *
      * @return bool
      * @throws ValidationException
      */
-    public function validate(array $fieldsForValidate = []) : bool
+    public function validate(?array $attributesForValidate = null) : bool
     {
         // drop result to true
         $this->result->clearBeforeValidate();
@@ -131,11 +129,32 @@ abstract class Validation
         // wrap rules in objects
         $rulesCollection = RulesCollection::makeRulesCollection($this->rules());
 
+        // check all filds in $attributesForValidate has roles
+        if ($attributesForValidate !== null)
+        {
+            // collect attributes by rules
+            // for check existing role for all attributes in $attributesForValidate
+            $attributesByRoles = $rulesCollection->getAttributesList();
+
+            // filter attributes without role
+            $attributesWithoutRules = array_filter($attributesForValidate, fn ($a) => !in_array($a, $attributesByRoles));
+            if (!empty($attributesWithoutRules)) {
+                throw new ValidationException(sprintf('Attribute (%s) with out rules', implode(', ', $attributesWithoutRules)));
+            }
+        }
+
         /** @var AttributeRule[] $rule */
         foreach ($rulesCollection as $aRule)
         {
+            $attribute = $aRule->getAttribute();
+            if ($attributesForValidate !== null) {
+                if (!in_array($attribute, $attributesForValidate)) {
+                    continue;
+                }
+            }
+
             // check is field is need validate
-            $value = $this->getValue($aRule->getAttribute());
+            $value = $this->getValue($attribute);
 
             // validation one field
             if ($aRule->getRule()->validate($value) == false) {

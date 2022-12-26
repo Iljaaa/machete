@@ -22,7 +22,6 @@ class RulesCollection implements \Iterator
      */
     private array $rules = [];
 
-
     /**
      * Make rules collection for validate
      * @param array $rules
@@ -87,6 +86,25 @@ class RulesCollection implements \Iterator
     {
         $this->rules[] = $r;
         return $this;
+    }
+
+    /**
+     * List of all attributes, collected by rules
+     * @return array
+     */
+    public function getAttributesList(): array
+    {
+        if (empty($this->rules)) return [];
+
+        $attributes = [];
+        foreach ($this->rules as $r) {
+            $roleAttribute = $r->getAttribute();
+            if (!in_array($roleAttribute, $attributes)) {
+                $attributes[] = $roleAttribute;
+            }
+        }
+
+        return $attributes;
     }
 
     /**
