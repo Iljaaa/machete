@@ -123,7 +123,7 @@ abstract class Rule
             case 'string'   : return new StringValidationRule($ruleConfig);
             case 'required' : return new RequiredValidationRule($ruleConfig);
             case 'number'   : return new RequiredValidationRule($ruleConfig);
-            case 'in'       : return InValidationRule::selfCreateFromHandlerConfig($ruleConfig);
+            case 'in'       : return InValidationRule::selfCreateFromValidatorConfig($ruleConfig);
         }
 
         return null;

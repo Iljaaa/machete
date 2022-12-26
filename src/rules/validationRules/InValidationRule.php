@@ -47,12 +47,15 @@ class InValidationRule extends Rule
     /**
      * @param array $config
      * @return InValidationRule
+     * @throws RuleConfigurationException
      */
-    public static function selfCreateFromHandlerConfig(array $config): InValidationRule
+    public static function selfCreateFromValidatorConfig(array $config): InValidationRule
     {
         $haystack = $config['haystack'] ?? $config[2] ?? null;
 
-        // let me think need here exception or not
+        if (empty($haystack)) {
+            throw new RuleConfigurationException('Haystack is empty');
+        }
 
         $r = new InValidationRule($haystack);
 

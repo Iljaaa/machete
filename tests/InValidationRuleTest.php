@@ -42,6 +42,10 @@ class InValidationRuleTest extends \PHPUnit\Framework\TestCase
 
     }
 
+    /**
+     * @return void
+     * @throws ValidationException
+     */
     public function testExceptionsOnValidate ()
     {
         $this->expectException(ValidationException::class);
@@ -52,6 +56,14 @@ class InValidationRuleTest extends \PHPUnit\Framework\TestCase
 
         $this->expectException(ValidationException::class);
         (new InValidationRule())->validate([0 => ['aaa'], 2 => true]);
+    }
+
+    public function testExceptionsOnCreateFromValidationArray()
+    {
+        InValidationRule::selfCreateFromValidatorConfig(['field', 'in', [1, 2]]);
+
+        $this->expectException(RuleConfigurationException::class);
+        InValidationRule::selfCreateFromValidatorConfig(['field', 'in']);
     }
 
     /**

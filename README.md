@@ -99,6 +99,35 @@ $result = (new InValidationRule())->setHaystack($haystack)->validate($needle);
 
 ```
 
+regex
+==
+
+synthesis of config array
+```php
+['attribute',  'regex', 'pattern', ...adiitonalParams]
+```
+
+additional params:
+
+| Param   | type   | Are                              | Default      |
+|---------|--------|:---------------------------------|:-------------|
+| message | string | error message                    | Not in array |
+
+manual use validator: 
+```php
+$result = (new RegexValidationRule())->isMatch($regexPattern, $variable);
+
+or
+
+$result = (new RegexValidationRule($regexPattern))->validate($needle);
+
+or
+
+$result = (new RegexValidationRule())->setHaystack($regexPattern)->validate($needle);
+
+```
+
+
 
 Self validation functions
 ==
