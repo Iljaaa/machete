@@ -2,8 +2,10 @@
 
 namespace Iljaaa\Machete\rules;
 
+use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\validationRules\CallableRule;
+use Iljaaa\Machete\rules\validationRules\InValidationRule;
 use Iljaaa\Machete\rules\validationRules\RequiredValidationRule;
 use Iljaaa\Machete\rules\validationRules\StringValidationRule;
 
@@ -11,7 +13,7 @@ use Iljaaa\Machete\rules\validationRules\StringValidationRule;
  * Extends for validate one rule
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.1
+ * @version 1.0.2
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -24,9 +26,9 @@ abstract class Rule
     protected RuleValidationResult $validationResult;
 
     /**
-     * @param array $config
+     * Constructor create a result object
      */
-    public function __construct (array $config = [])
+    public function __construct ()
     {
         $this->validationResult = new RuleValidationResult();
     }
@@ -35,6 +37,7 @@ abstract class Rule
      * Run value validation
      * @param mixed $value
      * @return bool
+     * @throws ValidationException
      */
     public abstract function validate ($value): bool;
 
@@ -74,18 +77,20 @@ abstract class Rule
     }
 
     /**
-     * Create rule object from array data
+     * Create rule object from array getted from validation::roles
+     *
+     *
      * @param array $ruleConfig
      * @return Rule
-     * @throws ValidationException
+     * @throws RuleConfigurationException
      */
-    public static function makeRuleFromArray (array $ruleConfig): Rule
+    public static function makeRuleFromValidatorConfigArray (array $ruleConfig): Rule
     {
         // check field name
 
         // check validator exist
         if (empty($ruleConfig[1])) {
-            throw new ValidationException('Validation rule not set');
+            throw new RuleConfigurationException('Validation rule not set');
         }
 
         $rule = $ruleConfig[1];
@@ -94,7 +99,7 @@ abstract class Rule
         if (is_string($rule)) {
             $r = static::makeRuleFromString($rule, $ruleConfig);
             if (!$r) {
-                throw new ValidationException(sprintf('Validation rule vas not created by string "%s', $rule));
+                throw new RuleConfigurationException(sprintf('Validation rule vas not created by string "%s"', $rule));
             }
             return $r;
         }
@@ -104,11 +109,12 @@ abstract class Rule
             return new CallableRule($rule, $ruleConfig);
         }
 
-        throw new ValidationException("Unknown rule format");
+        throw new RuleConfigurationException("Unknown rule format");
     }
 
     /**
      * @param string $rule
+     * @param array $ruleConfig
      * @return null|Rule
      */
     private static function makeRuleFromString (string $rule, array $ruleConfig): ?Rule
@@ -117,6 +123,7 @@ abstract class Rule
             case 'string'   : return new StringValidationRule($ruleConfig);
             case 'required' : return new RequiredValidationRule($ruleConfig);
             case 'number'   : return new RequiredValidationRule($ruleConfig);
+            case 'in'       : return InValidationRule::selfCreateFromHandlerConfig($ruleConfig);
         }
 
         return null;

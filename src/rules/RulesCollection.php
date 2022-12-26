@@ -3,11 +3,14 @@
 namespace Iljaaa\Machete\rules;
 
 
+use Iljaaa\Machete\exceptions\ValidationException;
+use Iljaaa\Machete\rules\validationRules\CallableRule;
+
 /**
  * Rules collection
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.1.2
+ * @version 1.2.3
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -18,6 +21,62 @@ class RulesCollection implements \Iterator
      * @var AttributeRule[]
      */
     private array $rules = [];
+
+
+    /**
+     * Make rules collection for validate
+     * @param array $rules
+     * @return RulesCollection
+     * @throws ValidationException
+     */
+    public static function makeRulesCollection (array $rules): RulesCollection
+    {
+        $collection = new RulesCollection();
+
+        // fill rules collection
+        foreach ($rules as $ruleConfig)
+        {
+            // make attributes array
+            $attributes = static::makeAttributesArrayFromRuleConfig($ruleConfig);
+
+            foreach ($attributes as $attr)
+            {
+                // make role validator
+                $roleValidator = Rule::makeRuleFromValidatorConfigArray($ruleConfig);
+
+                // if is callable we need additional add field name
+                // for the pas it in callback function
+                if ($roleValidator instanceof CallableRule) {
+                    $roleValidator->setFormFieldName($attr);
+                }
+
+                //
+                $collection->add(new AttributeRule($attr, $roleValidator));
+            }
+        }
+
+        return $collection;
+    }
+
+    /**
+     * Make fields array from difrend types
+     * @param array $ruleConfig
+     * @return array
+     * @throws ValidationException
+     */
+    private static function makeAttributesArrayFromRuleConfig (array $ruleConfig): array
+    {
+        if (empty($ruleConfig[0])) {
+            throw new ValidationException("Rule data have not attribute description");
+        }
+
+        $field = $ruleConfig[0];
+
+        if (is_string($field)) return [$field];
+        if (is_array($field)) return $field;
+
+        throw new ValidationException("Unknown field description");
+    }
 
     /**
      * Add rule to collection

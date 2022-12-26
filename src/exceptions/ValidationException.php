@@ -3,7 +3,7 @@
 namespace Iljaaa\Machete\exceptions;
 
 /**
- * What i can say here
+ * Base exception for all in package
  */
 class ValidationException extends \Exception
 {

@@ -29,6 +29,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                      [['number'], 'required'],
                      [['notset'], 'required'],
                      [['valid'], 'required'],
+                     ['phones', 'in', ['345', '123', '333']]
                  ];
              }
          };

@@ -129,7 +129,7 @@ abstract class Validation
         $this->result->clearBeforeValidate();
 
         // wrap rules in objects
-        $rulesCollection = static::makeRulesCollection($this->rules());
+        $rulesCollection = RulesCollection::makeRulesCollection($this->rules());
 
         /** @var AttributeRule[] $rule */
         foreach ($rulesCollection as $aRule)
@@ -151,7 +151,7 @@ abstract class Validation
 
     /**
      * Return array of error messages grouped by field
-     * @return void
+     * @return array
      */
     public function getErrors(): array
     {
@@ -195,60 +195,5 @@ abstract class Validation
         return $this->result->isAttributeValid($attribute);
     }
 
-    /**
-     * Make rules collection for validate
-     * todo: move to collection
-     * @param array $rules
-     * @return RulesCollection
-     * @throws ValidationException
-     */
-    private static function makeRulesCollection (array $rules): RulesCollection
-    {
-        $collection = new RulesCollection();
-
-        // fill rules collection
-        foreach ($rules as $ruleConfig)
-        {
-            // make attributes array
-            $attributes = static::makeAttributesArrayFromRuleConfig($ruleConfig);
-
-            foreach ($attributes as $attr)
-            {
-                // make role validator
-                $roleValidator = Rule::makeRuleFromArray($ruleConfig);
-
-                // if is callable we need additional add field name
-                // for the pas it in callback function
-                if ($roleValidator instanceof CallableRule) {
-                    $roleValidator->setFormFieldName($attr);
-                }
-
-                //
-                $collection->add(new AttributeRule($attr, $roleValidator));
-            }
-        }
-
-        return $collection;
-    }
-
-    /**
-     * Make fields array from difrend types
-     * @param array $ruleConfig
-     * @return void
-     * @throws ValidationException
-     */
-    private static function makeAttributesArrayFromRuleConfig (array $ruleConfig): array
-    {
-        if (empty($ruleConfig[0])) {
-            throw new ValidationException("Rule data have not attribute description");
-        }
-
-        $field = $ruleConfig[0];
-
-        if (is_string($field)) return [$field];
-        if (is_array($field)) return $field;
-
-        throw new ValidationException("Unknown field description");
-    }
 
 }

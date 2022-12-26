@@ -9,14 +9,16 @@ PHP version 7.4, not tested on version 8
 public function rules (): array
 {
     return [
-        [['name'], 'validateName', 'message' => 'Replaced error message'],
+        ['firstname', 'string', 'min' => 22],
+        [['lastname'], [$this, 'myCustomValidationMethod'], 'message' => 'Replaced error message'],
+        [['age'],  'number', 'min' => 18, 'max' => 100]
     ];
 }
 ```
 
 first parameter is field name
 
-second is validator like string, number
+second is validator like string, number. in ....
 
 next is named params dif-rend for each rule 
 
@@ -65,6 +67,37 @@ string additional params
 | toShort   | string |                                          | To short           |
 | toLong    | string |                                          | To long            |
 
+in
+==
+synthesis of config array
+```php
+['age',  'in', ['array', 'iterator', 'traversableObject']]
+```
+
+the third param mast be array or object with implementation of Traversable
+
+additional params:
+
+| Param   | type   | Are                              | Default      |
+|---------|--------|:---------------------------------|:-------------|
+| message | string | error message                    | Not in array |
+| strict  | bool   | strict flag in in_array function | false        |
+
+manual use
+--
+
+```php
+$result = (new InValidationRule())->inArray($needle, $haystack);
+
+or
+
+$result = (new InValidationRule($haystack))->validate($needle);
+
+or
+
+$result = (new InValidationRule())->setHaystack($haystack)->validate($needle);
+
+```
 
 
 Self validation functions
@@ -86,11 +119,13 @@ All what can pass is_callable function
 this callable object be call with params
 ($value, string $attribute, Role $role)
 
-Road map
-- required
+To do:
+- role exception
+- write normal description to exception classes
+- required - ready
 - string - ready
 - number -
-- in
+- in -
 - callable - +/-
 - array
 - associated array
