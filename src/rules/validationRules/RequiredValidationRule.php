@@ -23,13 +23,33 @@ class RequiredValidationRule extends Rule
     /**
      * @param array $config
      */
-    public function __construct (array $config = [])
+    public function __construct ()
     {
-        parent::__construct($config);
-
-        if (!empty($config['message'])) $this->message = $config['message'];
+        parent::__construct();
     }
 
+    /**
+     * @param array $config
+     * @return RequiredValidationRule
+     */
+    public static function selfCreateFromValidatorConfig(array $config): RequiredValidationRule
+    {
+        $r = new RequiredValidationRule();
+
+        if (!empty($config['message'])) $r->setMessage($config['message']);
+
+        return $r;
+    }
+
+    /**
+     * @param string $message
+     * @return RequiredValidationRule
+     */
+    public function setMessage (string $message): RequiredValidationRule
+    {
+        $this->message = $message;
+        return $this;
+    }
 
     /**
      * @param $value

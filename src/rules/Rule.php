@@ -116,13 +116,14 @@ abstract class Rule
      * @param string $rule
      * @param array $ruleConfig
      * @return null|Rule
+     * @throws RuleConfigurationException
      */
     private static function makeRuleFromString (string $rule, array $ruleConfig): ?Rule
     {
         switch ($rule) {
             case 'string'   : return new StringValidationRule($ruleConfig);
-            case 'required' : return new RequiredValidationRule($ruleConfig);
-            case 'number'   : return new RequiredValidationRule($ruleConfig);
+            case 'required' : return RequiredValidationRule::selfCreateFromValidatorConfig($ruleConfig);
+            // case 'number'   : return new RequiredValidationRule($ruleConfig);
             case 'in'       : return InValidationRule::selfCreateFromValidatorConfig($ruleConfig);
         }
 
