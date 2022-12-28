@@ -9,10 +9,10 @@ use Iljaaa\Machete\rules\Rule;
  * in base used
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @package Iljaaa\Machete
  */
-class RequiredValidationRule extends Rule
+class RequiredRule extends Rule
 {
     /**
      * Basic error messages
@@ -22,11 +22,11 @@ class RequiredValidationRule extends Rule
 
     /**
      * @param array $config
-     * @return RequiredValidationRule
+     * @return RequiredRule
      */
-    public static function selfCreateFromValidatorConfig(array $config): RequiredValidationRule
+    public static function selfCreateFromValidatorConfig(array $config): RequiredRule
     {
-        $r = new RequiredValidationRule();
+        $r = new RequiredRule();
 
         if (!empty($config['message'])) $r->setMessage($config['message']);
 
@@ -35,9 +35,9 @@ class RequiredValidationRule extends Rule
 
     /**
      * @param string $message
-     * @return RequiredValidationRule
+     * @return RequiredRule
      */
-    public function setMessage (string $message): RequiredValidationRule
+    public function setMessage (string $message): RequiredRule
     {
         $this->message = $message;
         return $this;

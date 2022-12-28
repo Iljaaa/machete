@@ -5,9 +5,12 @@ namespace Iljaaa\Machete\rules;
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\validationRules\CallableRule;
+use Iljaaa\Machete\rules\validationRules\FloatRule;
+use Iljaaa\Machete\rules\validationRules\IntRule;
 use Iljaaa\Machete\rules\validationRules\InValidationRule;
-use Iljaaa\Machete\rules\validationRules\RequiredValidationRule;
-use Iljaaa\Machete\rules\validationRules\StringValidationRule;
+use Iljaaa\Machete\rules\validationRules\RegexRule;
+use Iljaaa\Machete\rules\validationRules\RequiredRule;
+use Iljaaa\Machete\rules\validationRules\StringRule;
 
 /**
  * Extends for validate one rule
@@ -121,10 +124,13 @@ abstract class Rule
     private static function makeRuleFromString (string $rule, array $ruleConfig): ?Rule
     {
         switch ($rule) {
-            case 'string'   : return new StringValidationRule($ruleConfig);
-            case 'required' : return RequiredValidationRule::selfCreateFromValidatorConfig($ruleConfig);
+            case 'string'   : return new StringRule($ruleConfig);
+            case 'required' : return RequiredRule::selfCreateFromValidatorConfig($ruleConfig);
+            case 'int'      : return IntRule::selfCreateFromValidatorConfig($ruleConfig);
+            case 'float'    : return FloatRule::selfCreateFromValidatorConfig($ruleConfig);
             // case 'number'   : return new RequiredValidationRule($ruleConfig);
             case 'in'       : return InValidationRule::selfCreateFromValidatorConfig($ruleConfig);
+            case 'regex'    : return RegexRule::selfCreateFromValidatorConfig($ruleConfig);
         }
 
         return null;

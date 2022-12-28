@@ -13,13 +13,13 @@ use Iljaaa\Machete\rules\Rule;
  * @version 1.0.1
  * @package Iljaaa\Machete
  */
-class RegexValidationRule extends Rule
+class RegexRule extends Rule
 {
     /**
      * Regex for math
      * @var string|null
      */
-    private ?string $regex = null;
+    private ?string $regex;
 
     /**
      * Error messages
@@ -39,9 +39,9 @@ class RegexValidationRule extends Rule
 
     /**
      * @param string|null $regex
-     * @return RegexValidationRule
+     * @return RegexRule
      */
-    public function setRegex (?string $regex): RegexValidationRule
+    public function setRegex (?string $regex): RegexRule
     {
         $this->regex = $regex;
         return $this;
@@ -49,9 +49,9 @@ class RegexValidationRule extends Rule
 
     /**
      * @param string $message
-     * @return RegexValidationRule
+     * @return RegexRule
      */
-    public function setMessage (string $message): RegexValidationRule
+    public function setMessage (string $message): RegexRule
     {
         $this->message = $message;
         return $this;
@@ -59,17 +59,17 @@ class RegexValidationRule extends Rule
 
     /**
      * @param array $config
-     * @return RegexValidationRule
+     * @return RegexRule
      * @throws RuleConfigurationException
      */
-    public static function selfCreateFromValidatorConfig (array $config): RegexValidationRule
+    public static function selfCreateFromValidatorConfig (array $config): RegexRule
     {
         $regex = $config['regex'] ?? $config[2] ?? null;
         if (empty($regex)) {
             throw new RuleConfigurationException('Regex pattern not set', null, $config);
         }
 
-        $r = new RegexValidationRule($regex);
+        $r = new RegexRule($regex);
         if (!empty($config['message'])) $r->setMessage($config['message']);
         return $r;
     }

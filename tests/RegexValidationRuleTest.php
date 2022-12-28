@@ -1,8 +1,8 @@
 <?php
 
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
-use Iljaaa\Machete\rules\validationRules\RegexValidationRule;
-use Iljaaa\Machete\rules\validationRules\StringValidationRule;
+use Iljaaa\Machete\rules\validationRules\RegexRule;
+use Iljaaa\Machete\rules\validationRules\StringRule;
 
 /**
  * Regex string component
@@ -21,7 +21,7 @@ class RegexValidationRuleTest extends \PHPUnit\Framework\TestCase
     public function testOther ()
     {
         // $this->expectException(\Iljaaa\Machete\exceptions\ValidationException::class);
-        $result = (new RegexValidationRule('this is not patters'))->validate(new stdClass());
+        $result = (new RegexRule('this is not patters'))->validate(new stdClass());
         $this->assertFalse($result, 'its object is valid');
 
         $c = new class {
@@ -30,7 +30,7 @@ class RegexValidationRuleTest extends \PHPUnit\Framework\TestCase
             }
         };
 
-        $result = (new RegexValidationRule())->setRegex('/^str/')->validate($c);
+        $result = (new RegexRule())->setRegex('/^str/')->validate($c);
         $this->assertTrue($result);
     }
 
@@ -40,7 +40,7 @@ class RegexValidationRuleTest extends \PHPUnit\Framework\TestCase
     public function testDescription ()
     {
         // type
-        $rule = new RegexValidationRule('/^[a-z]+$/');
+        $rule = new RegexRule('/^[a-z]+$/');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('123sdsadas'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -48,7 +48,7 @@ class RegexValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['Not match'], $rule->getErrors(), 'Wrong errors array');
 
         // override
-        $rule = (new RegexValidationRule('/^[a-z]+$/'))->setMessage('test message for regex test');
+        $rule = (new RegexRule('/^[a-z]+$/'))->setMessage('test message for regex test');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('123123'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -56,7 +56,7 @@ class RegexValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['test message for regex test'], $rule->getErrors(), 'Wrong errors array');
 
         // set message as param on validator config string
-        $rule = RegexValidationRule::selfCreateFromValidatorConfig(['field', 'regex', '/^ilj(a)+$/', 'message' => 'test message for regex validator']);
+        $rule = RegexRule::selfCreateFromValidatorConfig(['field', 'regex', '/^ilj(a)+$/', 'message' => 'test message for regex validator']);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('123123'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -71,12 +71,12 @@ class RegexValidationRuleTest extends \PHPUnit\Framework\TestCase
      */
     public function testExceptionsOnCreateFromValidationArray()
     {
-        $result = RegexValidationRule::selfCreateFromValidatorConfig(['field', 'regex', '/^ilj(a)+$/'])->validate('iljaaaaaaaaaaa');
+        $result = RegexRule::selfCreateFromValidatorConfig(['field', 'regex', '/^ilj(a)+$/'])->validate('iljaaaaaaaaaaa');
         $this->assertTrue($result);
 
         $this->expectException(RuleConfigurationException::class);
 
-        RegexValidationRule::selfCreateFromValidatorConfig(['field', 'regex']);
-        RegexValidationRule::selfCreateFromValidatorConfig(['field', 'regex', null]);
+        RegexRule::selfCreateFromValidatorConfig(['field', 'regex']);
+        RegexRule::selfCreateFromValidatorConfig(['field', 'regex', null]);
     }
 }

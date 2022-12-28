@@ -104,10 +104,10 @@ class CallableRule extends Rule
 
     /**
      * @param array $config
-     * @return RegexValidationRule
+     * @return RegexRule
      * @throws RuleConfigurationException
      */
-    public static function selfCreateFromValidatorConfig (array $config): RegexValidationRule
+    public static function selfCreateFromValidatorConfig (array $config): RegexRule
     {
         if (empty($config[1])) {
             throw new RuleConfigurationException('Callable parameter empty', null, $config);
@@ -118,7 +118,7 @@ class CallableRule extends Rule
             throw new RuleConfigurationException('Object is not callable', null, $config);
         }
 
-        return new RegexValidationRule($callableObject);
+        return new RegexRule($callableObject);
         // if (!empty($config['message'])) $r->setMessage($config['message']);
         // if (!empty($config['message'])) $r->setMessage($config['message']);
     }

@@ -4,13 +4,20 @@ namespace Iljaaa\Machete\rules\validationRules;
 
 use Iljaaa\Machete\rules\Rule;
 
-class IntValidationRule extends NumericValidationRule
+/**
+ * Float validation rule
+ *
+ * @author ilja <the.ilja@gmail.com>
+ * @version 1.0.0
+ * @package Iljaaa\Machete
+ */
+class FloatRule extends NumericValidationRule
 {
     /**
      * Min and max size of string
-     * @var int|null
+     * @var float|null
      */
-    protected ?int $min = null, $max = null;
+    protected ?float $min = null, $max = null;
 
     /**
      * Wrong type error message
@@ -20,13 +27,13 @@ class IntValidationRule extends NumericValidationRule
 
     /**
      * @param array $config
-     * @return IntValidationRule
+     * @return FloatRule
      */
-    public static function selfCreateFromValidatorConfig (array $config): IntValidationRule
+    public static function selfCreateFromValidatorConfig (array $config): FloatRule
     {
         $r = new static();
 
-        if (isset($config['min'])) $r->setMin((int) $config['min']);
+        if (isset($config['min'])) $r->setMin((float) $config['min']);
         if (!empty($config['max'])) $r->setMax((float) $config['max']);
 
         if (!empty($config['wrongType'])) $r->setWrongType($config['wrongType']);
@@ -38,9 +45,9 @@ class IntValidationRule extends NumericValidationRule
 
     /**
      * @param float $min
-     * @return IntValidationRule
+     * @return Rule
      */
-    public function setMin (float $min): IntValidationRule
+    public function setMin (float $min): Rule
     {
         $this->min = $min;
         return $this;
@@ -48,9 +55,9 @@ class IntValidationRule extends NumericValidationRule
 
     /**
      * @param float $max
-     * @return IntValidationRule
+     * @return Rule
      */
-    public function setMax (float $max): IntValidationRule
+    public function setMax (float $max): Rule
     {
         $this->max = $max;
         return $this;
@@ -58,9 +65,9 @@ class IntValidationRule extends NumericValidationRule
 
     /**
      * @param string $wrongType
-     * @return IntValidationRule
+     * @return Rule
      */
-    public function setWrongType (string $wrongType): IntValidationRule
+    public function setWrongType (string $wrongType): Rule
     {
         $this->wrongType = $wrongType;
         return $this;
@@ -72,7 +79,9 @@ class IntValidationRule extends NumericValidationRule
      */
     public function validate($value): bool
     {
-        if (!is_int($value)){
+        if(is_int($value)) $value = (float) $value;
+
+        if (!is_float($value)){
             $this->validationResult->addError($this->wrongType);
             return false;
         }

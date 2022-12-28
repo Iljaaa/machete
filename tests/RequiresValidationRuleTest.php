@@ -1,6 +1,6 @@
 <?php
 
-use Iljaaa\Machete\rules\validationRules\RequiredValidationRule;
+use Iljaaa\Machete\rules\validationRules\RequiredRule;
 
 /**
  * Test string component
@@ -18,7 +18,7 @@ class RequiresValidationRuleTest extends \PHPUnit\Framework\TestCase
      **/
     public function testDefaultFalseValues ()
     {
-        $v = (new RequiredValidationRule());
+        $v = (new RequiredRule());
         $this->assertFalse($v->isValid(), 'its not false');
         $result = $v->validate(new stdClass());
         $this->assertTrue($result, 'object is valid');
@@ -29,34 +29,34 @@ class RequiresValidationRuleTest extends \PHPUnit\Framework\TestCase
      **/
     public function testValues ()
     {
-        $result = (new RequiredValidationRule())->validate(new stdClass());
+        $result = (new RequiredRule())->validate(new stdClass());
         $this->assertTrue($result, 'object is valid');
 
-        $result = (new RequiredValidationRule())->validate(new class {});
+        $result = (new RequiredRule())->validate(new class {});
         $this->assertTrue($result, 'object is valid');
 
-        $result = (new RequiredValidationRule())->validate([]);
+        $result = (new RequiredRule())->validate([]);
         $this->assertFalse($result, 'array is not empty');
 
-        $result = (new RequiredValidationRule())->validate([1]);
+        $result = (new RequiredRule())->validate([1]);
         $this->assertTrue($result, 'array is empty');
 
-        $result = (new RequiredValidationRule())->validate(null);
+        $result = (new RequiredRule())->validate(null);
         $this->assertFalse($result, 'null is required');
 
-        $result = (new RequiredValidationRule())->validate(0);
+        $result = (new RequiredRule())->validate(0);
         $this->assertFalse($result, 'object is not valid');
 
-        $result = (new RequiredValidationRule())->validate(1);
+        $result = (new RequiredRule())->validate(1);
         $this->assertTrue($result, 'object is not valid');
 
-        $result = (new RequiredValidationRule())->validate('');
+        $result = (new RequiredRule())->validate('');
         $this->assertFalse($result, 'object is not valid');
 
-        $result = (new RequiredValidationRule())->validate(' ');
+        $result = (new RequiredRule())->validate(' ');
         $this->assertTrue($result, 'whitespace is not true');
 
-        $result = (new RequiredValidationRule())->validate('some string');
+        $result = (new RequiredRule())->validate('some string');
         $this->assertTrue($result, 'object is not valid');
     }
 
@@ -65,28 +65,28 @@ class RequiresValidationRuleTest extends \PHPUnit\Framework\TestCase
      **/
     public function testDescription ()
     {
-        $rule = new RequiredValidationRule();
+        $rule = new RequiredRule();
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertEquals('It\'s required', $rule->getFirstError(), 'Wrong first error');
         $this->assertEquals(['It\'s required'], $rule->getErrors(), 'Wrong errors array');
 
-        $rule = (new RequiredValidationRule())->setMessage('required test message');
+        $rule = (new RequiredRule())->setMessage('required test message');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertEquals('required test message', $rule->getFirstError(), 'Wrong first error');
         $this->assertEquals(['required test message'], $rule->getErrors(), 'Wrong errors array');
 
-        $rule = RequiredValidationRule::selfCreateFromValidatorConfig(['message' => 'required test message2']);
+        $rule = RequiredRule::selfCreateFromValidatorConfig(['message' => 'required test message2']);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertEquals('required test message2', $rule->getFirstError(), 'Wrong first error');
         $this->assertEquals(['required test message2'], $rule->getErrors(), 'Wrong errors array');
 
-        $rule = RequiredValidationRule::selfCreateFromValidatorConfig(['message' => 'required test message2'])
+        $rule = RequiredRule::selfCreateFromValidatorConfig(['message' => 'required test message2'])
             ->setMessage('required second test message');
 
         $this->assertFalse($rule->isValid(), 'wrong result');

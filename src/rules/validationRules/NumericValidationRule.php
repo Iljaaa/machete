@@ -4,6 +4,14 @@ namespace Iljaaa\Machete\rules\validationRules;
 
 use Iljaaa\Machete\rules\Rule;
 
+/**
+ * Base class for int & float rules
+ *
+ * @author ilja <the.ilja@gmail.com>
+ * @version 1.0.0
+ * @package Iljaaa\Machete
+ * @see https://github.com/Iljaaa/machete
+ */
 abstract class NumericValidationRule extends Rule
 {
     /**
@@ -17,7 +25,7 @@ abstract class NumericValidationRule extends Rule
 
     /**
      * @param string $message
-     * @return FloatValidationRule
+     * @return FloatRule
      */
     public function setToSmall (string $message): NumericValidationRule
     {
@@ -27,7 +35,7 @@ abstract class NumericValidationRule extends Rule
 
     /**
      * @param string $message
-     * @return FloatValidationRule
+     * @return FloatRule
      */
     public function setToBig (string $message): NumericValidationRule
     {

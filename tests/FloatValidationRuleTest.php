@@ -1,7 +1,7 @@
 <?php
 
-use Iljaaa\Machete\rules\validationRules\FloatValidationRule;
-use Iljaaa\Machete\rules\validationRules\StringValidationRule;
+use Iljaaa\Machete\rules\validationRules\FloatRule;
+use Iljaaa\Machete\rules\validationRules\StringRule;
 
 /**
  * Test string component
@@ -19,7 +19,7 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
     public function testOther ()
     {
         // $this->expectException(\Iljaaa\Machete\exceptions\ValidationException::class);
-        $result = (new FloatValidationRule())->validate(null);
+        $result = (new FloatRule())->validate(null);
         $this->assertFalse($result, 'new stdClass() is valid string');
     }
 
@@ -29,7 +29,7 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
     public function testDescription ()
     {
         // type
-        $rule = new FloatValidationRule();
+        $rule = new FloatRule();
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('sadfsdfdsf'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -37,7 +37,7 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['It\'s not int'], $rule->getErrors(), 'Wrong errors array');
 
         // override
-        $rule = (new FloatValidationRule())->setWrongType('wrong type message');
+        $rule = (new FloatRule())->setWrongType('wrong type message');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -46,7 +46,7 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
 
 
         // override
-        $rule = FloatValidationRule::selfCreateFromValidatorConfig(['wrongType' => 'wrong type message']);
+        $rule = FloatRule::selfCreateFromValidatorConfig(['wrongType' => 'wrong type message']);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -56,7 +56,7 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
 
 
         // default message
-        $rule = (new FloatValidationRule())->setMin(10)->setToSmall("test to small");
+        $rule = (new FloatRule())->setMin(10)->setToSmall("test to small");
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate(5), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -64,7 +64,7 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['test to small'], $rule->getErrors(), 'Wrong errors array');
 
         // override message
-        $rule = FloatValidationRule::selfCreateFromValidatorConfig(['min' => 10, 'toSmall' => 'Test to big message']);
+        $rule = FloatRule::selfCreateFromValidatorConfig(['min' => 10, 'toSmall' => 'Test to big message']);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate(5), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -76,7 +76,7 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
         // short
 
         // default message
-        $rule = (new FloatValidationRule())->setMax(5)->setToBig("test to small");
+        $rule = (new FloatRule())->setMax(5)->setToBig("test to small");
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate(15), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -84,7 +84,7 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['test to small'], $rule->getErrors(), 'Wrong errors array');
 
         // override message
-        $rule = FloatValidationRule::selfCreateFromValidatorConfig(['max' => 5, 'toBig' => 'Test to big message']);
+        $rule = FloatRule::selfCreateFromValidatorConfig(['max' => 5, 'toBig' => 'Test to big message']);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate(15), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -92,7 +92,7 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['Test to big message'], $rule->getErrors(), 'Wrong errors array');
 
 
-        $rule = FloatValidationRule::selfCreateFromValidatorConfig(['max' => 5, 'toBig' => 'Test to big message'])->setToBig('rrrrrrr');
+        $rule = FloatRule::selfCreateFromValidatorConfig(['max' => 5, 'toBig' => 'Test to big message'])->setToBig('rrrrrrr');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate(19), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -108,29 +108,29 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
     public function testMinMax ()
     {
         //
-        $result = (new FloatValidationRule())->setMax(10)->validate(9);
+        $result = (new FloatRule())->setMax(10)->validate(9);
         $this->assertTrue($result);
 
-        $result = (new FloatValidationRule())->setMax(10)->validate(11);
+        $result = (new FloatRule())->setMax(10)->validate(11);
         $this->assertFalse($result);
 
-        $result = (new FloatValidationRule())->setMin(10)->validate(11);
+        $result = (new FloatRule())->setMin(10)->validate(11);
         $this->assertTrue($result);
 
-        $result = (new FloatValidationRule())->setMin(10)->validate(9);
+        $result = (new FloatRule())->setMin(10)->validate(9);
         $this->assertFalse($result);
 
         //
-        $result = FloatValidationRule::selfCreateFromValidatorConfig(['max' => 10])->validate(9);
+        $result = FloatRule::selfCreateFromValidatorConfig(['max' => 10])->validate(9);
         $this->assertTrue($result);
 
-        $result = FloatValidationRule::selfCreateFromValidatorConfig(['max' => 10])->validate(11);
+        $result = FloatRule::selfCreateFromValidatorConfig(['max' => 10])->validate(11);
         $this->assertFalse($result);
 
-        $result = FloatValidationRule::selfCreateFromValidatorConfig(['min' => 10])->validate(11);
+        $result = FloatRule::selfCreateFromValidatorConfig(['min' => 10])->validate(11);
         $this->assertTrue($result);
 
-        $result = FloatValidationRule::selfCreateFromValidatorConfig(['min' => 10])->validate(9);
+        $result = FloatRule::selfCreateFromValidatorConfig(['min' => 10])->validate(9);
         $this->assertFalse($result);
     }
 

@@ -11,7 +11,7 @@ use Iljaaa\Machete\rules\Rule;
  * @version 1.0.1
  * @package Iljaaa\Machete
  */
-class StringValidationRule extends Rule
+class StringRule extends Rule
 {
     /**
      * Min and max size of string

@@ -1,6 +1,6 @@
 <?php
 
-use Iljaaa\Machete\rules\validationRules\StringValidationRule;
+use Iljaaa\Machete\rules\validationRules\StringRule;
 
 /**
  * Test string component
@@ -18,7 +18,7 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
     public function testOther ()
     {
         // $this->expectException(\Iljaaa\Machete\exceptions\ValidationException::class);
-        $result = (new StringValidationRule([]))->validate(new stdClass());
+        $result = (new StringRule([]))->validate(new stdClass());
         $this->assertFalse($result, 'new stdClass() is valid string');
     }
 
@@ -28,7 +28,7 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
     public function testDescription ()
     {
         // type
-        $rule = new StringValidationRule();
+        $rule = new StringRule();
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -36,7 +36,7 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['It\'s not a string'], $rule->getErrors(), 'Wrong errors array');
 
         // override
-        $rule = new StringValidationRule(['wrongType' => 'wrong type error message']);
+        $rule = new StringRule(['wrongType' => 'wrong type error message']);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -44,7 +44,7 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['wrong type error message'], $rule->getErrors(), 'Wrong errors array');
 
         // default message
-        $rule = new StringValidationRule(['max' => 10]);
+        $rule = new StringRule(['max' => 10]);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('asdasdaskjdbasjhdvkasjdv'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -52,7 +52,7 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['To long'], $rule->getErrors(), 'Wrong errors array');
 
         // override message
-        $rule = new StringValidationRule(['max' => 10, 'toLong' => 'Test to big message']);
+        $rule = new StringRule(['max' => 10, 'toLong' => 'Test to big message']);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('asdasdaskjdbasjhdvkasjdv'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -62,7 +62,7 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
         // short
 
         // default
-        $rule = new StringValidationRule(['min' => 10]);
+        $rule = new StringRule(['min' => 10]);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('test'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -70,7 +70,7 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['To short'], $rule->getErrors(), 'Wrong errors array');
 
         // override
-        $rule = new StringValidationRule(['min' => 10, 'toShort' => 'Test short message']);
+        $rule = new StringRule(['min' => 10, 'toShort' => 'Test short message']);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('test'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -84,7 +84,7 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
      **/
     public function testMinMax ()
     {
-        $result = (new StringValidationRule(['max' => 10]))->validate(new stdClass());
+        $result = (new StringRule(['max' => 10]))->validate(new stdClass());
 
         $this->assertIsBool($result, 'new stdClass() is valid string');
     }

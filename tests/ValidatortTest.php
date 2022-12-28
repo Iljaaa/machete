@@ -1,6 +1,7 @@
 <?php
 
 use Iljaaa\Machete\exceptions\ValidationException;
+use Iljaaa\Machete\Validation;
 
 require(__DIR__.'/../vendor/autoload.php');
 
@@ -16,9 +17,57 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      *
      */
+     public function testAllRules ()
+     {
+         $validator = new class extends Validation
+         {
+             public string $string = '';
+
+             public string $myNameWho = 'SlimShady';
+
+             public function rules (): array
+             {
+                 return [
+                     [['string'], 'required', 'message' => 'String is reqqqqured'],
+                     [['number'], 'required'],
+                     [['myNameWho'], 'regex', '/^S/'],
+                     [['number'], 'int', "min" => 5],
+                     [['number'], 'float', "min" => 5],
+                     [['notset'], 'required'],
+                     [['valid'], 'required'],
+                     ['phones', 'in', ['345', '123', '333']],
+                 ];
+             }
+         };
+
+        $validator->load ([
+            'string' => '',
+            'number' => 10,
+            'valid' => 'aaaaa',
+        ]);
+
+
+         $this->assertFalse($validator->isValid(), 'is validate flag wrong');
+         $this->assertFalse($validator->validate());
+         $this->assertFalse($validator->isValid());
+         $this->assertFalse($validator->isValid(), 'is validate flag wrong 2');
+
+         $this->assertFalse($validator->isAttributeValid('string'), );
+         $this->assertTrue($validator->isAttributeValid('number'));
+         $this->assertFalse($validator->isAttributeValid('notset'));
+         $this->assertTrue($validator->isAttributeValid('valid'));
+
+         $this->assertEquals('String is reqqqqured', $validator->getFirstErrorForAttribute('string'));
+         $this->assertEquals('', $validator->getFirstErrorForAttribute('number'));
+         $this->assertEquals('It\'s required', $validator->getFirstErrorForAttribute('notset'));
+         $this->assertEmpty($validator->getFirstErrorForAttribute('valid'));
+     }
+    /**
+     *
+     */
      public function testOther ()
      {
-         $validator = new class extends \Iljaaa\Machete\Validation
+         $validator = new class extends Validation
          {
              public string $string = '';
 
@@ -65,7 +114,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
      public function testClassParamsLoad ()
      {
-         $validator = new class extends \Iljaaa\Machete\Validation
+         $validator = new class extends Validation
          {
              public string $name = 'sdkjasasdasd';
 
@@ -94,7 +143,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
      public function testLoadParamsFunction ()
      {
-         $validator = new class extends \Iljaaa\Machete\Validation
+         $validator = new class extends Validation
          {
              public function rules(): array
              {
@@ -122,7 +171,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testCallableParam()
     {
-        $validator = new class extends \Iljaaa\Machete\Validation
+        $validator = new class extends Validation
         {
             public string $name = 'sdkjasasdasd';
 
@@ -155,7 +204,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testReturnErrorsTest ()
     {
-        $validator = new class extends \Iljaaa\Machete\Validation
+        $validator = new class extends Validation
         {
             public string $name = 'name';
             public string $value = 'value';
@@ -209,7 +258,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidatePartsOfFields ()
     {
-        $validator = new class extends \Iljaaa\Machete\Validation
+        $validator = new class extends Validation
         {
             public string $name = 'name';
             public string $value = '';
