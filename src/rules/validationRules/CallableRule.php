@@ -2,6 +2,8 @@
 
 namespace Iljaaa\Machete\rules\validationRules;
 
+use Iljaaa\Machete\exceptions\RuleConfigurationException;
+use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\Rule;
 
 /**
@@ -15,44 +17,110 @@ class CallableRule extends Rule
     /**
      * @var callable
      */
-    private $callableObject;
+    private $callableObject = null;
 
     /**
      * Form field name for pass in callback
      * @var string
      */
-    private string $formFieldName = '';
+    private string $wrongType = "Current object is not callable object";
 
     /**
-     * @param callable $callableObject
-     * @param array $config
+     * Form attribute name
+     * when we call a validate method
+     * it call a callable object with parameters one of them its a attribute name
+     * @var string
      */
-    public function __construct (callable $callableObject, array $config)
+    private string $attributeName = '';
+
+    /**
+     * @param callable|null $callableObject
+     */
+    public function __construct (?callable $callableObject = null)
     {
-        parent::__construct($config);
+        parent::__construct();
 
         $this->callableObject = $callableObject;
     }
 
     /**
-     * @param string $formFieldName
+     * @param string $attributeName
+     * @return CallableRule
      */
-    public function setFormFieldName (string $formFieldName): void
+    public function setAttributeName (string $attributeName): CallableRule
     {
-        $this->formFieldName = $formFieldName;
+        $this->attributeName = $attributeName;
+        return $this;
+    }
+
+    /**
+     * @param string $wrongType
+     * @return CallableRule
+     */
+    public function setWrongType (string $wrongType): CallableRule
+    {
+        $this->wrongType = $wrongType;
+        return $this;
+    }
+
+    /**
+     * @param callable|null $callableObject
+     * @return CallableRule
+     */
+    public function setCallableObject (callable $callableObject): CallableRule
+    {
+        $this->callableObject = $callableObject;
+        return $this;
     }
 
     /**
      * @param $value
      * @return bool
+     * @throws ValidationException
      */
     public function validate ($value): bool
     {
-        if (is_callable($value)) {
-            return $this->validationResult->addError('Its not callable')->isValid();
+        if (empty($this->callableObject)){
+            throw new ValidationException('Callable object not set');
         }
 
-        return call_user_func($this->callableObject, $value, $this->formFieldName, $this);
+        if (!is_callable($this->callableObject)) {
+            return $this->validationResult->addError($this->wrongType)->isValid();
+        }
+
+        // drop to default rue result
+        $this->validationResult->setIsValid();
+
+        $r = call_user_func($this->callableObject, $value, $this->attributeName, $this);
+
+        if (!is_bool($r)) {
+            throw new ValidationException('Validation function must return bool');
+        }
+
+
+
+        return $r;
+    }
+
+    /**
+     * @param array $config
+     * @return RegexValidationRule
+     * @throws RuleConfigurationException
+     */
+    public static function selfCreateFromValidatorConfig (array $config): RegexValidationRule
+    {
+        if (empty($config[1])) {
+            throw new RuleConfigurationException('Callable parameter empty', null, $config);
+        }
+
+        $callableObject = $config[1];
+        if (!is_callable($callableObject)){
+            throw new RuleConfigurationException('Object is not callable', null, $config);
+        }
+
+        return new RegexValidationRule($callableObject);
+        // if (!empty($config['message'])) $r->setMessage($config['message']);
+        // if (!empty($config['message'])) $r->setMessage($config['message']);
     }
 
 }

@@ -67,11 +67,16 @@ string additional params
 | toShort   | string |                                          | To short           |
 | toLong    | string |                                          | To long            |
 
-int
+int & float
 ==
+
+Int vas auto converted into float
+
 ```php
 ['attribute',  'float', ....]
+['attribute',  'int', ....]
 ```
+
 | Param     | type   | Are                                      | Default            |
 |-----------|--------|:-----------------------------------------|:-------------------|
 | min       | int    | minimum string length for check          | null               |
@@ -80,10 +85,19 @@ int
 | toSmall   | string |                                          | To short           |
 | toBig     | string |                                          | To long            |
 
-float
-==
+manual use
+--
+
 ```php
-['attribute',  'float', ....]
+$result = (new InValidationRule())->validate($value);
+or
+$result = (new InValidationRule())
+    ->setMin($minIntOfFloat)
+    ->setMax($maxIntAndFloat)
+    ->setToSmall();
+    ->setToBig();
+    ->validate($needle);
+
 ```
 
 in
@@ -153,7 +167,7 @@ Self validation functions
 
 No content here, 
 
-Self validation functions
+Callable
 --
 
 Second paramether can be callable
@@ -161,11 +175,29 @@ like this
 ['name', function () {}]
 
 or
-['name', fn ($value, string $attribute, Role $rol) => true]
+['name', fn ($value, string $attribute, Role $rol) => true, ....]
 
-All what can pass is_callable function
-this callable object be call with params
-($value, string $attribute, Role $role)
+
+| Param     | type   | Are                           | Default |
+|-----------|--------|:------------------------------|:--------|
+| message   | string | error message                 |         |
+| wrongType | string | wrong type of callable object |         |
+
+Use callable for self made validation rule.
+Second parameter is callable object, he vas checked is_callable function
+
+Callable function must return a boolean value
+
+This object was be called with params
+
+```php
+yoreValidationFunction($value, ?string $attribute, Role $role): bool
+```
+
+Where:
+$value - its value fro check
+string $attribute - name of checked attribute
+Role $role - instance of CallableValidationRule class
 
 To do:
 - role exception

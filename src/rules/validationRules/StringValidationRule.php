@@ -28,6 +28,7 @@ class StringValidationRule extends Rule
     private string $toLong = 'To long';
 
     /**
+     * fixme: refactor it
      * @param array $config
      */
     public function __construct (array $config = [])

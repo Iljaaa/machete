@@ -46,7 +46,7 @@ class RulesCollection implements \Iterator
                 // if is callable we need additional add field name
                 // for the pas it in callback function
                 if ($roleValidator instanceof CallableRule) {
-                    $roleValidator->setFormFieldName($attr);
+                    $roleValidator->setAttributeName($attr);
                 }
 
                 //

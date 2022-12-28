@@ -165,9 +165,9 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                 return [
                     [['name'], 'string', 'min' => 7, 'toShort' => 'name to short'],
                     [['name'], [$this, 'nonStaticValidateMethod']],
-                    [['name'], [ValidatorTest::class, 'functionForTestStaticCallAddError']]
-                    // [['shortString'], 'string', 'max' => 3, 'toLong' => 'Short field to long'],
-                    // [['validString'], 'string', 'min' => 3, 'max' => 6],
+                    [['name'], [ValidatorTest::class, 'functionForTestStaticCallAddError']],
+                    [['shortString'], 'string', 'max' => 3, 'toLong' => 'Short field to long'],
+                    [['validString'], 'string', 'min' => 3, 'max' => 6],
                 ];
             }
 
@@ -184,7 +184,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $errors = $validator->getErrors();
         $this->assertIsArray($errors, 'errors must be array');
         // 1 its correct, we have only noe field for validate
-        $this->assertCount(1, $errors, 'wrong errors count');
+        $this->assertCount(3, $errors, 'wrong errors count');
 
         $firstError = $validator->getFirstError();
         $this->assertIsString($firstError, 'error mast be string');
@@ -197,6 +197,14 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $attributeFirstError = $validator->getFirstErrorForAttribute('name');
         $this->assertIsString($attributeFirstError, 'errors must be array');
         $this->assertNotEmpty($attributeFirstError, 'error is empty');
+
+        $shortStringErrors = $validator->getErrorsForAttribute('shortString');
+        $this->assertIsArray($shortStringErrors, 'errors must be array');
+        $this->assertCount(1, $shortStringErrors, 'wrong errors count');
+
+        $shortStringFirstError = $validator->getFirstErrorForAttribute('shortString');
+        $this->assertIsString($shortStringFirstError, 'errors must be array');
+        $this->assertNotEmpty($shortStringFirstError, 'error is empty');
     }
 
     public function testValidatePartsOfFields ()
