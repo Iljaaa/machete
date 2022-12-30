@@ -9,12 +9,12 @@ use Iljaaa\Machete\rules\RulesCollection;
 use Iljaaa\Machete\rules\validationRules\CallableRule;
 
 /**
- * Its validation
+ * Its Validation class
  *
- * file for extend
- * class MySuperValidator extents
- *
- * @version 1.1.4
+ * @author ilja <the.ilja@gmail.com>
+ * @version 1.1.5
+ * @package Iljaaa\Machete
+ * @see https://github.com/Iljaaa/machete
  */
 abstract class Validation
 {
@@ -29,6 +29,12 @@ abstract class Validation
      */
     private ValidationResult $result;
 
+    /**
+     * Is vas validate() method calls
+     * @var bool
+     */
+    private bool $isVasValidate = false;
+
     public function __construct ()
     {
         $this->result = new ValidationResult();
@@ -39,6 +45,15 @@ abstract class Validation
      * @return array
      */
     abstract public function rules(): array;
+
+    /**
+     * Is vas validate() method calls
+     * @return bool
+     */
+    public function isVasValidated(): bool
+    {
+        return $this->isVasValidate;
+    }
 
     /**
      * Is data valid
@@ -164,6 +179,9 @@ abstract class Validation
 
         // sava validated rules in result
         $this->result->setRulesCollection($rulesCollection);
+
+        // mark as finish
+        $this->isVasValidate = true;
 
         return $this->result->isValid();
     }

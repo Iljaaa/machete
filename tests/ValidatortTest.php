@@ -36,6 +36,8 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                      [['notset'], 'required'],
                      [['valid'], 'required'],
                      ['phones', 'in', ['345', '123', '333']],
+
+                     // todo: add callable
                  ];
              }
          };
@@ -48,7 +50,9 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
 
          $this->assertFalse($validator->isValid(), 'is validate flag wrong');
+         $this->assertFalse($validator->isVasValidated());
          $this->assertFalse($validator->validate());
+         $this->assertTrue($validator->isVasValidated());
          $this->assertFalse($validator->isValid());
          $this->assertFalse($validator->isValid(), 'is validate flag wrong 2');
 
@@ -62,6 +66,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
          $this->assertEquals('It\'s required', $validator->getFirstErrorForAttribute('notset'));
          $this->assertEmpty($validator->getFirstErrorForAttribute('valid'));
      }
+
     /**
      *
      */
@@ -91,7 +96,9 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
 
          $this->assertFalse($validator->isValid(), 'is validate flag wrong');
+         $this->assertFalse($validator->isVasValidated());
          $this->assertFalse($validator->validate());
+         $this->assertTrue($validator->isVasValidated());
          $this->assertFalse($validator->isValid());
          $this->assertFalse($validator->isValid(), 'is validate flag wrong 2');
 
@@ -108,15 +115,14 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
 
     /**
-     *
-     *
+     * Test when data in class attributes
      * @throws ValidationException
      */
-     public function testClassParamsLoad ()
+     public function testClassParamsValidation ()
      {
          $validator = new class extends Validation
          {
-             public string $name = 'sdkjasasdasd';
+             protected string $name = 'sdkjasasdasd';
 
              public function rules(): array
              {
@@ -129,7 +135,9 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
          };
 
          $this->assertFalse($validator->isValid(), 'start is isValid flag is wrong');
+         $this->assertFalse($validator->isVasValidated(), 'start is isValid flag is wrong');
          $this->assertTrue($validator->validate(), "class is not valid");
+         $this->assertTrue($validator->isVasValidated(), 'start is isValid flag is wrong');
          $this->assertTrue($validator->isValid(), 'after validate isValid is wrong');
 
          $this->assertEmpty($validator->getFirstErrorForAttribute('name'), 'error of name mast by null');
@@ -157,8 +165,11 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
          $validator->load(['name' => 'asdfasdfasf']);
 
+         $this->assertFalse($validator->isVasValidated());
          $this->assertFalse($validator->isValid(), 'start is isValid flag is wrong');
+         $this->assertFalse($validator->isVasValidated());
          $this->assertTrue($validator->validate(), "class is not valid");
+         $this->assertTrue($validator->isVasValidated());
          $this->assertTrue($validator->isValid(), 'after validate isValid is wrong');
 
          $this->assertEmpty($validator->getFirstErrorForAttribute('name'), 'error of name mast by null');
@@ -191,8 +202,11 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             }
         };
 
+        $this->assertFalse($validator->isVasValidated());
         $this->assertFalse($validator->isValid(), 'start is isValid flag is wrong');
+        $this->assertFalse($validator->isVasValidated());
         $this->assertTrue($validator->validate(), "class is not valid");
+        $this->assertTrue($validator->isVasValidated());
         $this->assertTrue($validator->isValid(), 'start is isValid flag is wrong');
 
     }
@@ -226,8 +240,11 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             }
         };
 
+        $this->assertFalse($validator->isVasValidated());
         $this->assertFalse($validator->isValid(), 'start is isValid flag is wrong');
+        $this->assertFalse($validator->isVasValidated());
         $this->assertFalse($validator->validate(), "class is not valid");
+        $this->assertTrue($validator->isVasValidated());
         $this->assertFalse($validator->isValid(), 'start is isValid flag is wrong');
 
         $errors = $validator->getErrors();
@@ -273,18 +290,26 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             }
         };
 
+        $this->assertFalse($validator->isVasValidated());
         $result = $validator->validate(['name']);
+        $this->assertTrue($validator->isVasValidated());
         $this->assertTrue($result);
 
+        $this->assertTrue($validator->isVasValidated());
         $result = $validator->validate(['value']);
+        $this->assertTrue($validator->isVasValidated());
         $this->assertFalse($result);
         $this->assertCount(1, $validator->getErrors());
 
+        $this->assertTrue($validator->isVasValidated());
         $result = $validator->validate(['value2']);
+        $this->assertTrue($validator->isVasValidated());
         $this->assertFalse($result);
         $this->assertCount(1, $validator->getErrors());
 
+        $this->assertTrue($validator->isVasValidated());
         $result = $validator->validate(['name']);
+        $this->assertTrue($validator->isVasValidated());
         $this->assertTrue($result);
         $this->assertEmpty($validator->getErrors());
 

@@ -1,11 +1,15 @@
 # machete
 Another validation library
 
-PHP version 7.4, not tested on version 8
+PHP version 7.4, not tested on version 8. but he must be fine
 
-! Machete dont have pre filters on validate values
+! Machete don't applies any pre filters on yore data and modified it. 
+Dont use it with not pre cleared data, like $_GET, $_POST etc...
+Machete don works with $_FILES data.
 
+Full simple example:
 ```php
+todo: finish it
 public function rules (): array
 {
     return [
@@ -16,26 +20,144 @@ public function rules (): array
 }
 ```
 
-first parameter is field name
+How to use validation
 
-second is validator like string, number. in ....
+1. Create class and extend by Validate class
+2. Override rules() method
+3. Load data in you class
+4. Call validate() method e.c. method validate return boolean result of validate
 
-next is named params dif-rend for each rule 
+After validation use method isValid() for get validation result without check data it's most faster becouse of result 
+of validations saved in static method. 
+
+Before you call validate() method isValid() allways return false. 
+
+For check is data if form vas checked use isVasValidated()
+
+Loading data in class
+==
+
+You cam validate protected and public attributes of validation class. 
+You need put value for validate in this attribute and call validate method()
+
+If attribute is not defined in class and when you use 
+
+```php
+$yourClass->yourAttributeName = "value";
+```
+
+value will be putted in internal storage and you can get it from there by attribute name
+```php
+$value = $yourClass->yourAttributeName;
+```
+
+You can do not describe any attributes in your class ann load all or a part data is storage 
+```php
+$form->load($_GET);
+```
+
+Validator state public methods
+==
+
+```php
+/**
+ * is vas validate method call 
+ */
+public function isVasValidated(): bool
+```
+
+Return answer on question: is form was validated before?
+
+```php
+/**
+ * Is data valid 
+ */
+public function isValid(): bool
+```
+
+```php
+/**
+ * Is attribute valid
+ */
+public function isAttributeValid (string $attribute): bool
+```
+
+Methods isValid() and isAttributeValid() always return false before you call validate() method   
 
 
-Use validation class
-1. extend Validate class
-2. owerride rules():array method
-3. load data, by data method
-4. call validate() method e.c. method validate return boolean result of validate
+Rules method
+==
+Its the only one abstract method to be implemented.
 
-after validation use method isValid() for get validation result, before you call validate() isValid 
-be allways return false wot is wrong
+Rules method mast return array of named arrays, every named array descript one validation role. It mas be in save sintaxis
+
+```php
+public function rules(): array 
+{
+    return [
+        ['attribute', 'validator'],
+        ['name', 'required'],
+        ['phone', 'string', 'max' => 100],     
+    ];
+}
+```
+
+Drill to one rule row
+==
+Rule named array looks like this:
+```php
+['attribute_name', 'validator_name', ... additonal params],
+```
+
+First element of array is form attribute name for validation. You may use array of names if you need to check any attributes 
+
+Second is validator name, you may use provided rules (like: string, int. in ....) or create self validation method 
+
+Next are additional options differend for every rule
+
+Get validation error messages
+==
+
+```php
+/**
+ * Array of errors grouped by attribute 
+ */
+public function getErrors(): array
+```
+
+```php
+/**
+ * First found error 
+ */
+public function getFirstError(): string
+```
+
+```php
+/**
+ * Errors array for attribute 
+ */
+public function getErrorsForAttribute(string $attribute): array
+```
+
+```php
+/**
+ * First found error for attribute
+ */
+public function getFirstErrorForAttribute(string $attribute): string
+```
+
+Manual use rules
+==
+
+Validation rules can be used without form. You can create instance of validation class, 
+parameterize it and pas data to validate method.
+
+Chapter of provided rules has full examples of every rule.
 
 Provided rules
 ==
 
-rule set is second paramether of rule array
+Rule short name set in rule described array is second position
 
 required
 --
@@ -160,8 +282,6 @@ $result = (new RegexValidationRule())->setHaystack($regexPattern)->validate($nee
 
 ```
 
-
-
 Self validation functions
 ==
 
@@ -183,10 +303,14 @@ or
 | message   | string | error message                 |         |
 | wrongType | string | wrong type of callable object |         |
 
-Use callable for self made validation rule.
-Second parameter is callable object, he vas checked is_callable function
+Use any callable for self made validation rule function.
 
-Callable function must return a boolean value
+Describe it as second parameter is callable object, it vas checked is_callable function 
+and if it false return false result and add wrong type error to form state
+
+Callable function must return a boolean value. 
+Validation check return values and if it false add error message to form state and change summary
+validation state on false. 
 
 This object was be called with params
 
@@ -198,6 +322,23 @@ Where:
 $value - its value fro check
 string $attribute - name of checked attribute
 Role $role - instance of CallableValidationRule class
+
+Use form state in views
+==
+
+If you want now is was form validated and result of validation do somthing like this:
+```php
+if ($form->isVasValidate() && $form->isValid() == false) echo "Form is not valid" 
+```
+
+If you want now is vas form loaded and check. And if attribute has error display it 
+```php
+if ($form->isVasValidate() && $form->isAttributeValid('attribute') == false) {
+    echo $form->getFirstErrorForAttribute("attribute")
+} 
+```
+
+
 
 To do:
 - role exception
