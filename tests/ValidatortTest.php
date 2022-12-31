@@ -30,6 +30,8 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                  return [
                      [['string'], 'required', 'message' => 'String is reqqqqured'],
                      [['number'], 'required'],
+                     [['myNameWho'], 'string'],
+                     [['myNameWho'], 'required', 'message' => 'Its required field'],
                      [['myNameWho'], 'regex', '/^S/'],
                      [['number'], 'int', "min" => 5],
                      [['number'], 'float', "min" => 5],
@@ -112,7 +114,6 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
          $this->assertEquals('It\'s required', $validator->getFirstErrorForAttribute('notset'));
          $this->assertEmpty($validator->getFirstErrorForAttribute('valid'));
      }
-
 
     /**
      * Test when data in class attributes
@@ -216,7 +217,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      * @return void
      * @throws ValidationException
      */
-    public function testReturnErrorsTest ()
+    public function testReturnErrors ()
     {
         $validator = new class extends Validation
         {
@@ -273,6 +274,10 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($shortStringFirstError, 'error is empty');
     }
 
+    /**
+     * @return void
+     * @throws ValidationException
+     */
     public function testValidatePartsOfFields ()
     {
         $validator = new class extends Validation
@@ -315,6 +320,62 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
         $this->expectException(ValidationException::class);
         $validator->validate(['valuesdlfjblsdkbf']);
+    }
+
+    /**
+     * Test what happend if we call state method before call validate
+     * @return void
+     */
+    public function testCllStateMethodsWithOutValidate ()
+    {
+        $validator = new class extends Validation
+        {
+            public string $name = 'name';
+            public string $value = 'value';
+
+            public function rules(): array
+            {
+                return [
+                    [['name'], 'string', 'min' => 7, 'toShort' => 'name to short'],
+                    [['name'], [$this, 'nonStaticValidateMethod']],
+                    [['name'], [ValidatorTest::class, 'functionForTestStaticCallAddError']],
+                    [['shortString'], 'string', 'max' => 3, 'toLong' => 'Short field to long'],
+                    [['validString'], 'string', 'min' => 3, 'max' => 6],
+                ];
+            }
+
+            public function nonStaticValidateMethod($value, string $field, \Iljaaa\Machete\rules\Rule $r): bool {
+                $r->addError('error from nonStaticValidateMethod');
+                return false;
+            }
+        };
+
+        $this->assertFalse($validator->isVasValidated());
+        $this->assertFalse($validator->isValid(),);
+        $this->assertFalse($validator->isAttributeValid("asdasdsad"));
+
+        $this->assertIsArray($validator->getErrors());
+        $this->assertEmpty($validator->getErrors());
+
+        $this->assertIsString($validator->getFirstError());
+        $this->assertEmpty($validator->getFirstError());
+
+        $this->assertIsArray($validator->getErrorsForAttribute("asdasdsad"));
+        $this->assertEmpty($validator->getErrorsForAttribute("asdasdsad"));
+
+        $this->assertIsString($validator->getFirstErrorForAttribute("asdasdsad"));
+        $this->assertEmpty($validator->getFirstErrorForAttribute("asdasdsad"));
+
+
+
+
+        $validator = new class extends Validation
+        {
+            public function rules(): array
+            {
+                return [];
+            }
+        };
     }
 
     /**

@@ -4,6 +4,14 @@ namespace Iljaaa\Machete;
 
 use Iljaaa\Machete\rules\RulesCollection;
 
+/**
+ * Result of form validation
+ *
+ * @author ilja <the.ilja@gmail.com>
+ * @version 1.0.1
+ * @package Iljaaa\Machete
+ * @see https://github.com/Iljaaa/machete
+ */
 class ValidationResult
 {
 
@@ -63,7 +71,7 @@ class ValidationResult
      */
     public function getErrors (): array
     {
-        return $this->rules->getErrors();
+        return ($this->rules) ? $this->rules->getErrors() : [];
     }
 
     /**
@@ -71,7 +79,7 @@ class ValidationResult
      */
     public function getFirstError (): string
     {
-        return $this->rules->getFirstError();
+        return ($this->rules) ? $this->rules->getFirstError() : '';
     }
 
     /**
@@ -80,7 +88,7 @@ class ValidationResult
      */
     public function getErrorsForAttribute (string $attribute): array
     {
-        return $this->rules->getErrorsForAttribute($attribute);
+        return ($this->rules) ? $this->rules->getErrorsForAttribute($attribute) : [];
     }
 
     /**
@@ -89,7 +97,7 @@ class ValidationResult
      */
     public function getFirstErrorForAttribute (string $attribute): string
     {
-        return $this->rules->getFirstErrorForAttribute($attribute);
+        return ($this->rules) ? $this->rules->getFirstErrorForAttribute($attribute) : '';
     }
 
     /**
@@ -98,7 +106,7 @@ class ValidationResult
      */
     public function isAttributeValid (string $attribute): bool
     {
-        return $this->rules->isAttributeValid ($attribute);
+        return $this->rules && $this->rules->isAttributeValid($attribute);
     }
 
 }

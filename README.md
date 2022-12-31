@@ -7,7 +7,7 @@ PHP version 7.4, not tested on version 8. but he must be fine
 Dont use it with not pre cleared data, like $_GET, $_POST etc...
 Machete don works with $_FILES data.
 
-Full simple example:
+Full example:
 ```php
 todo: finish it
 public function rules (): array
@@ -19,6 +19,17 @@ public function rules (): array
     ];
 }
 ```
+
+Installation
+==
+
+Wia composer 
+
+````
+composer require iljaaa/machete
+````
+
+Or download it, define iljaaa/machete namespace in autoload und use it 
 
 How to use validation
 
@@ -338,15 +349,10 @@ if ($form->isVasValidate() && $form->isAttributeValid('attribute') == false) {
 } 
 ```
 
-
-
 To do:
-- role exception
 - write normal description to exception classes
-- required - ready
-- string - ready
-- number -
-- in -
-- callable - +/-
+- int, float - remake to use filters https://www.php.net/manual/en/filter.filters.validate.php
+- callable - +/- think about more tests
 - array
 - associated array
+- update fields errors
