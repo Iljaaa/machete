@@ -2,16 +2,17 @@
 
 namespace Iljaaa\Machete\rules\validationRules;
 
-use Iljaaa\Machete\rules\Rule;
+use Iljaaa\Machete\rules\BasicRule;
+use Iljaaa\Machete\Validation;
 
 /**
  * Strings validation
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.1
+ * @version 1.0.2
  * @package Iljaaa\Machete
  */
-class StringRule extends Rule
+class StringRule extends BasicRule
 {
     /**
      * Min and max size of string
@@ -43,8 +44,10 @@ class StringRule extends Rule
         if (!empty($config['toLong'])) $this->toLong = $config['toLong'];
     }
 
-
-    public function validate($value): bool
+    /**
+     * @inheritDoc
+     */
+    public function validate($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
         if (!is_string($value)) {
             $this->validationResult->addError($this->wrongType);

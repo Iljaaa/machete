@@ -10,14 +10,15 @@ use Iljaaa\Machete\rules\Rule;
 class RuleConfigurationException extends ValidationException
 {
     /**
-     *
+     * Ru;e instance
      */
-    private ?Rule $rule = null;
+    private ?Rule $rule;
 
     /**
+     * Rule form config
      * @var array|null
      */
-    private ?array $roleConfig = null;
+    private ?array $roleConfig;
 
     /**
      * @param string $message

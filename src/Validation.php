@@ -4,7 +4,7 @@ namespace Iljaaa\Machete;
 
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\AttributeRule;
-use Iljaaa\Machete\rules\Rule;
+use Iljaaa\Machete\rules\BasicRule;
 use Iljaaa\Machete\rules\RulesCollection;
 use Iljaaa\Machete\rules\validationRules\CallableRule;
 

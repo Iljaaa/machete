@@ -199,7 +199,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                 ];
             }
 
-            public function nonStaticValidateMethod($value, string $field, \Iljaaa\Machete\rules\Rule $r): bool {
+            public function nonStaticValidateMethod($value, string $field, \Iljaaa\Machete\rules\BasicRule $r): bool {
                 return true;
             }
         };
@@ -236,7 +236,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                 ];
             }
 
-            public function nonStaticValidateMethod($value, string $field, \Iljaaa\Machete\rules\Rule $r): bool {
+            public function nonStaticValidateMethod($value, string $field, \Iljaaa\Machete\rules\BasicRule $r): bool {
                 $r->addError('error from nonStaticValidateMethod');
                 return false;
             }
@@ -331,7 +331,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      * static test function but it add error
      * @return bool
      */
-    public static function functionForTestStaticCallAddError($value, string $attribute, \Iljaaa\Machete\rules\Rule $r): bool {
+    public static function functionForTestStaticCallAddError($value, string $attribute, \Iljaaa\Machete\rules\BasicRule $r): bool {
         $r->addError('error form functionForTestStaticCallAddError');
         return false;
     }

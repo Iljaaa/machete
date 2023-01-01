@@ -2,16 +2,16 @@
 
 namespace Iljaaa\Machete\rules\validationRules;
 
-use Iljaaa\Machete\rules\Rule;
+use Iljaaa\Machete\Validation;
 
 /**
  * Float validation rule
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @package Iljaaa\Machete
  */
-class FloatRule extends NumericValidationRule
+class FloatRule extends NumericValidationBasicRule
 {
     /**
      * Min and max size of string
@@ -45,9 +45,9 @@ class FloatRule extends NumericValidationRule
 
     /**
      * @param float $min
-     * @return Rule
+     * @return FloatRule
      */
-    public function setMin (float $min): Rule
+    public function setMin (float $min): FloatRule
     {
         $this->min = $min;
         return $this;
@@ -55,9 +55,9 @@ class FloatRule extends NumericValidationRule
 
     /**
      * @param float $max
-     * @return Rule
+     * @return FloatRule
      */
-    public function setMax (float $max): Rule
+    public function setMax (float $max): FloatRule
     {
         $this->max = $max;
         return $this;
@@ -65,19 +65,18 @@ class FloatRule extends NumericValidationRule
 
     /**
      * @param string $wrongType
-     * @return Rule
+     * @return FloatRule
      */
-    public function setWrongType (string $wrongType): Rule
+    public function setWrongType (string $wrongType): FloatRule
     {
         $this->wrongType = $wrongType;
         return $this;
     }
 
     /**
-     * @param $value
-     * @return bool
+     * @inheritDoc
      */
-    public function validate($value): bool
+    public function validate($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
         if(is_int($value)) $value = (float) $value;
 

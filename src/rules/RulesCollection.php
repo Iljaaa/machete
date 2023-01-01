@@ -3,14 +3,21 @@
 namespace Iljaaa\Machete\rules;
 
 
+use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\validationRules\CallableRule;
+use Iljaaa\Machete\rules\validationRules\FloatRule;
+use Iljaaa\Machete\rules\validationRules\InRule;
+use Iljaaa\Machete\rules\validationRules\IntRule;
+use Iljaaa\Machete\rules\validationRules\RegexRule;
+use Iljaaa\Machete\rules\validationRules\RequiredRule;
+use Iljaaa\Machete\rules\validationRules\StringRule;
 
 /**
  * Rules collection
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.2.3
+ * @version 1.3.4
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -41,7 +48,7 @@ class RulesCollection implements \Iterator
             foreach ($attributes as $attr)
             {
                 // make role validator
-                $roleValidator = Rule::makeRuleFromValidatorConfigArray($ruleConfig);
+                $roleValidator = static::makeRuleFromValidatorConfigArray($ruleConfig);
 
                 // if is callable we need additional add field name
                 // for the pas it in callback function
@@ -75,6 +82,62 @@ class RulesCollection implements \Iterator
         if (is_array($field)) return $field;
 
         throw new ValidationException("Unknown field description");
+    }
+
+    /**
+     * Create rule object from array getted from validation::roles
+     *
+     * @param array $ruleConfig
+     * @return BasicRule
+     * @throws RuleConfigurationException
+     */
+    public static function makeRuleFromValidatorConfigArray (array $ruleConfig): BasicRule
+    {
+        // check field name
+
+        // check validator exist
+        if (empty($ruleConfig[1])) {
+            throw new RuleConfigurationException('Validation rule not set');
+        }
+
+        $rule = $ruleConfig[1];
+
+        // process string rule
+        if (is_string($rule)) {
+            $r = static::makeRuleFromString($rule, $ruleConfig);
+            if (!$r) {
+                throw new RuleConfigurationException(sprintf('Validation rule vas not created by string "%s"', $rule));
+            }
+            return $r;
+        }
+
+        // callable object
+        elseif (is_callable($rule)) {
+            return CallableRule::selfCreateFromValidatorConfig($ruleConfig);
+        }
+
+        throw new RuleConfigurationException("Unknown rule format");
+    }
+
+    /**
+     * @param string $rule
+     * @param array $ruleConfig
+     * @return null|BasicRule
+     * @throws RuleConfigurationException
+     */
+    private static function makeRuleFromString (string $rule, array $ruleConfig): ?BasicRule
+    {
+        switch ($rule) {
+            case 'string'   : return new StringRule($ruleConfig);
+            case 'required' : return RequiredRule::selfCreateFromValidatorConfig($ruleConfig);
+            case 'int'      : return IntRule::selfCreateFromValidatorConfig($ruleConfig);
+            case 'float'    : return FloatRule::selfCreateFromValidatorConfig($ruleConfig);
+            // case 'number'   : return new RequiredValidationRule($ruleConfig);
+            case 'in'       : return InRule::selfCreateFromValidatorConfig($ruleConfig);
+            case 'regex'    : return RegexRule::selfCreateFromValidatorConfig($ruleConfig);
+        }
+
+        return null;
     }
 
     /**

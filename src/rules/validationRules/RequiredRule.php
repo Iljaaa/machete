@@ -2,17 +2,18 @@
 
 namespace Iljaaa\Machete\rules\validationRules;
 
-use Iljaaa\Machete\rules\Rule;
+use Iljaaa\Machete\rules\BasicRule;
+use Iljaaa\Machete\Validation;
 
 /**
  * Required validation
  * in base used
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.1
+ * @version 1.0.2
  * @package Iljaaa\Machete
  */
-class RequiredRule extends Rule
+class RequiredRule extends BasicRule
 {
     /**
      * Basic error messages
@@ -44,10 +45,9 @@ class RequiredRule extends Rule
     }
 
     /**
-     * @param $value
-     * @return bool
+     * @inheritDoc
      */
-    public function validate($value): bool
+    public function validate($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
         // fixme: not good practice
         // but if we set RuleValidationResult.isValid default true

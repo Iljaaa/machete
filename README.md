@@ -330,9 +330,17 @@ yoreValidationFunction($value, ?string $attribute, Role $role): bool
 ```
 
 Where:
-$value - its value fro check
-string $attribute - name of checked attribute
-Role $role - instance of CallableValidationRule class
+- $value - its value for check
+- string $attribute - name of checked attribute
+- Role $role - instance of CallableValidationRule class
+
+Manual use:
+```php
+$result = (new CallableRule($callableObject))->validate($value);
+or
+$result = (new CallableRule())->setCallable($callableObject)->validate($value);
+```
+
 
 Use form state in views
 ==
@@ -353,7 +361,7 @@ To do:
 - write normal description to exception classes
 - int, float - remake to use filters https://www.php.net/manual/en/filter.filters.validate.php
 - date??? date as string with excepted format YYYY-MM-DD by pattern 2022-12-31, 2-3-2
-- assert
+- assert attribute for create form function 
 - array
 - associated array
 - array of accosiated arrays

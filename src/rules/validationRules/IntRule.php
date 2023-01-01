@@ -2,15 +2,17 @@
 
 namespace Iljaaa\Machete\rules\validationRules;
 
+use Iljaaa\Machete\Validation;
+
 /**
  * Integer validation rule
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
-class IntRule extends NumericValidationRule
+class IntRule extends NumericValidationBasicRule
 {
     /**
      * Min and max size of string
@@ -73,10 +75,9 @@ class IntRule extends NumericValidationRule
     }
 
     /**
-     * @param $value
-     * @return bool
+     * @inheritDoc
      */
-    public function validate($value): bool
+    public function validate($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
         if (!is_int($value)){
             $this->validationResult->addError($this->wrongType);

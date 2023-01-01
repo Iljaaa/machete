@@ -6,14 +6,14 @@ use Iljaaa\Machete\rules\BasicRule;
 use Iljaaa\Machete\rules\validationRules\CallableRule;
 
 /**
- * Test callable validator
+ * Test implement rule interface
  *
  * @author ilja <the.ilja@gmail.com>
  * @version 1.0.1
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
-class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
+class SelfeValidationRuleTest extends \PHPUnit\Framework\TestCase
 {
 
     /**

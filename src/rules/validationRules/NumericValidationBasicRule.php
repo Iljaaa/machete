@@ -2,7 +2,7 @@
 
 namespace Iljaaa\Machete\rules\validationRules;
 
-use Iljaaa\Machete\rules\Rule;
+use Iljaaa\Machete\rules\BasicRule;
 
 /**
  * Base class for int & float rules
@@ -12,7 +12,7 @@ use Iljaaa\Machete\rules\Rule;
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
-abstract class NumericValidationRule extends Rule
+abstract class NumericValidationBasicRule extends BasicRule
 {
     /**
      * Basic error messages
@@ -27,7 +27,7 @@ abstract class NumericValidationRule extends Rule
      * @param string $message
      * @return FloatRule
      */
-    public function setToSmall (string $message): NumericValidationRule
+    public function setToSmall (string $message): NumericValidationBasicRule
     {
         $this->toSmall = $message;
         return $this;
@@ -37,7 +37,7 @@ abstract class NumericValidationRule extends Rule
      * @param string $message
      * @return FloatRule
      */
-    public function setToBig (string $message): NumericValidationRule
+    public function setToBig (string $message): NumericValidationBasicRule
     {
         $this->toBig = $message;
         return $this;

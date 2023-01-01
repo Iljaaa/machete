@@ -2,7 +2,7 @@
 
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
-use Iljaaa\Machete\rules\validationRules\InValidationRule;
+use Iljaaa\Machete\rules\validationRules\InRule;
 
 /**
  * Test in component
@@ -19,7 +19,7 @@ class InValidationRuleTest extends \PHPUnit\Framework\TestCase
      **/
     public function testDefaultFalseValues ()
     {
-        $v = (new InValidationRule(['aaa']));
+        $v = (new InRule(['aaa']));
         $this->assertFalse($v->isValid(), 'its not false');
         $result = $v->validate('aaa');
         $this->assertTrue($result, 'object is valid');
@@ -30,13 +30,13 @@ class InValidationRuleTest extends \PHPUnit\Framework\TestCase
      */
     public function testDirectMethod ()
     {
-        $result = (new InValidationRule())->inArray(2, [1, 2]);
+        $result = (new InRule())->inArray(2, [1, 2]);
         $this->assertTrue($result);
 
-        $result = (new InValidationRule())->inArray(2, [1, 2], true);
+        $result = (new InRule())->inArray(2, [1, 2], true);
         $this->assertTrue($result);
 
-        $result = (new InValidationRule())->inArray(3, [1, 2], true);
+        $result = (new InRule())->inArray(3, [1, 2], true);
         $this->assertFalse($result);
 
 
@@ -49,21 +49,21 @@ class InValidationRuleTest extends \PHPUnit\Framework\TestCase
     public function testExceptionsOnValidate ()
     {
         $this->expectException(ValidationException::class);
-        (new InValidationRule())->validate([]);
+        (new InRule())->validate([]);
 
         $this->expectException(ValidationException::class);
-        (new InValidationRule())->validate([1 => ['aaa']]);
+        (new InRule())->validate([1 => ['aaa']]);
 
         $this->expectException(ValidationException::class);
-        (new InValidationRule())->validate([0 => ['aaa'], 2 => true]);
+        (new InRule())->validate([0 => ['aaa'], 2 => true]);
     }
 
     public function testExceptionsOnCreateFromValidationArray()
     {
-        InValidationRule::selfCreateFromValidatorConfig(['field', 'in', [1, 2]]);
+        InRule::selfCreateFromValidatorConfig(['field', 'in', [1, 2]]);
 
         $this->expectException(RuleConfigurationException::class);
-        InValidationRule::selfCreateFromValidatorConfig(['field', 'in']);
+        InRule::selfCreateFromValidatorConfig(['field', 'in']);
     }
 
     /**
@@ -71,33 +71,33 @@ class InValidationRuleTest extends \PHPUnit\Framework\TestCase
      **/
     public function testValues ()
     {
-        $result = (new InValidationRule([null]))->validate(null);
+        $result = (new InRule([null]))->validate(null);
         $this->assertTrue($result, 'array is not empty');
 
-        $result = (new InValidationRule([1, 2]))->validate(2);
+        $result = (new InRule([1, 2]))->validate(2);
         $this->assertTrue($result, 'array is not empty');
 
-        $result = (new InValidationRule([[1]]))->validate([1]);
+        $result = (new InRule([[1]]))->validate([1]);
         $this->assertTrue($result, 'array is not empty');
 
-        $result = (new InValidationRule([new stdClass()]))->validate(new stdClass());
+        $result = (new InRule([new stdClass()]))->validate(new stdClass());
         $this->assertTrue($result, 'object is valid');
-        $result = (new InValidationRule())->inArray(new stdClass(), [new stdClass()]);
+        $result = (new InRule())->inArray(new stdClass(), [new stdClass()]);
         $this->assertTrue($result, 'object is valid');
 
-        $result = (new InValidationRule([new class {}]))->validate(new class {});
+        $result = (new InRule([new class {}]))->validate(new class {});
         $this->assertFalse($result, 'object is valid');
-        $result = (new InValidationRule())->inArray(new class {}, [new class {}]);
+        $result = (new InRule())->inArray(new class {}, [new class {}]);
         $this->assertFalse($result, 'object is valid');
 
         $c = new class {};
-        $result = (new InValidationRule([$c]))->validate($c);
+        $result = (new InRule([$c]))->validate($c);
         $this->assertTrue($result, 'object is valid');
 
-        $result = (new InValidationRule())->setHaystack([$c])->validate($c);
+        $result = (new InRule())->setHaystack([$c])->validate($c);
         $this->assertTrue($result, 'object is valid');
 
-        $result = (new InValidationRule())->inArray($c, [$c]);
+        $result = (new InRule())->inArray($c, [$c]);
         $this->assertTrue($result, 'object is valid');
     }
 
@@ -106,14 +106,14 @@ class InValidationRuleTest extends \PHPUnit\Framework\TestCase
      **/
     public function testDescription ()
     {
-        $rule = new InValidationRule(['hi']);
+        $rule = new InRule(['hi']);
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertEquals('Not in array', $rule->getFirstError(), 'Wrong first error');
         $this->assertEquals(['Not in array'], $rule->getErrors(), 'Wrong errors array');
 
-        $rule = (new InValidationRule([]))->setMessage('required test message');
+        $rule = (new InRule([]))->setMessage('required test message');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');

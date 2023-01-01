@@ -4,16 +4,17 @@ namespace Iljaaa\Machete\rules\validationRules;
 
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
-use Iljaaa\Machete\rules\Rule;
+use Iljaaa\Machete\rules\BasicRule;
+use Iljaaa\Machete\Validation;
 
 /**
  * Strings validation
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.1
+ * @version 1.0.2
  * @package Iljaaa\Machete
  */
-class RegexRule extends Rule
+class RegexRule extends BasicRule
 {
     /**
      * Regex for math
@@ -75,11 +76,9 @@ class RegexRule extends Rule
     }
 
     /**
-     * @param $value
-     * @return bool
-     * @throws ValidationException
+     * @inheritDoc
      */
-    public function validate($value): bool
+    public function validate($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
         if (empty($this->regex)) {
             throw new ValidationException('Regex pattern is empty');

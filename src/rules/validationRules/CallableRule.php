@@ -4,15 +4,17 @@ namespace Iljaaa\Machete\rules\validationRules;
 
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
-use Iljaaa\Machete\rules\Rule;
+use Iljaaa\Machete\rules\BasicRule;
+use Iljaaa\Machete\Validation;
 
 /**
+ * Callable form rule
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.2
+ * @version 1.0.3
  * @package Iljaaa\Machete
  */
-class CallableRule extends Rule
+class CallableRule extends BasicRule
 {
     /**
      * @var callable
@@ -67,18 +69,16 @@ class CallableRule extends Rule
      * @param callable|null $callableObject
      * @return CallableRule
      */
-    public function setCallableObject (callable $callableObject): CallableRule
+    public function setCallable (callable $callableObject): CallableRule
     {
         $this->callableObject = $callableObject;
         return $this;
     }
 
     /**
-     * @param $value
-     * @return bool
-     * @throws ValidationException
+     * @inheritDoc
      */
-    public function validate ($value): bool
+    public function validate ($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
         if (empty($this->callableObject)){
             throw new ValidationException('Callable object not set');
@@ -97,8 +97,6 @@ class CallableRule extends Rule
             throw new ValidationException('Validation function must return bool');
         }
 
-
-
         return $r;
     }
 
@@ -109,8 +107,13 @@ class CallableRule extends Rule
      */
     public static function selfCreateFromValidatorConfig (array $config): CallableRule
     {
-        assert(empty($config[0]), 'Attribute name is empty, $config[0]');
-        // assert(empty($config[1]), 'Attribute name is empty, $config[0]');
+        // $a =
+        // assert(empty($config[0]), 'Attribute name is empty. '.print_r($config[0], true));
+        assert($config[0], 'Attribute name is empty, $config[0]');
+
+        /*if (empty($config[0])) {
+            throw new RuleConfigurationException('Attribute parameter empty', null, $config);
+        }*/
 
         if (empty($config[1])) {
             throw new RuleConfigurationException('Callable parameter empty', null, $config);

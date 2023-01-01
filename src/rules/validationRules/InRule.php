@@ -5,7 +5,8 @@ namespace Iljaaa\Machete\rules\validationRules;
 use http\Message;
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
-use Iljaaa\Machete\rules\Rule;
+use Iljaaa\Machete\rules\BasicRule;
+use Iljaaa\Machete\Validation;
 
 /**
  * Strings validation
@@ -14,7 +15,7 @@ use Iljaaa\Machete\rules\Rule;
  * @version 1.0.1
  * @package Iljaaa\Machete
  */
-class InValidationRule extends Rule
+class InRule extends BasicRule
 {
     /**
      * Basic error messages
@@ -46,10 +47,10 @@ class InValidationRule extends Rule
 
     /**
      * @param array $config
-     * @return InValidationRule
+     * @return InRule
      * @throws RuleConfigurationException
      */
-    public static function selfCreateFromValidatorConfig(array $config): InValidationRule
+    public static function selfCreateFromValidatorConfig(array $config): InRule
     {
         $haystack = $config['haystack'] ?? $config[2] ?? null;
 
@@ -57,7 +58,7 @@ class InValidationRule extends Rule
             throw new RuleConfigurationException('Haystack is empty');
         }
 
-        $r = new InValidationRule($haystack);
+        $r = new InRule($haystack);
 
         if (!empty($config['message'])) $r->setMessage($config['message']);
         if (!empty($config['strict'])) $r->setStrict((bool) $config['strict']);
@@ -70,7 +71,7 @@ class InValidationRule extends Rule
      * @param string $message
      * @return void
      */
-    public function setMessage(string $message): InValidationRule
+    public function setMessage(string $message): InRule
     {
         $this->message = $message;
         return $this;
@@ -78,9 +79,9 @@ class InValidationRule extends Rule
 
     /**
      * @param bool $strict
-     * @return InValidationRule
+     * @return InRule
      */
-    public function setStrict (bool $strict): InValidationRule
+    public function setStrict (bool $strict): InRule
     {
         $this->strict = $strict;
         return $this;
@@ -88,21 +89,22 @@ class InValidationRule extends Rule
 
     /**
      * @param array $haystack
-     * @return InValidationRule
+     * @return InRule
      */
-    public function setHaystack (array $haystack): InValidationRule
+    public function setHaystack (array $haystack): InRule
     {
         $this->haystack = $haystack;
         return $this;
     }
 
     /**
-     * @param mixed $value
-     * @return bool
-     * @throws ValidationException
+     * @inheritDoc
      */
-    public function validate($value): bool
+    public function validate($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
+        // todo: asert here
+        // assert($this->haystack, 'haystack is empty');
+
         if ($this->haystack === null){
             throw new ValidationException('Haystack for validate not set');
         }
