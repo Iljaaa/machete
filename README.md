@@ -352,7 +352,12 @@ if ($form->isVasValidate() && $form->isAttributeValid('attribute') == false) {
 To do:
 - write normal description to exception classes
 - int, float - remake to use filters https://www.php.net/manual/en/filter.filters.validate.php
-- callable - +/- think about more tests
+- date??? date as string with excepted format YYYY-MM-DD by pattern 2022-12-31, 2-3-2
+- assert
 - array
 - associated array
+- array of accosiated arrays
+- rule lire interface???
+- form rule validation, for self rule
 - update fields errors
+- think about static cache of fields validation state in validator for speed up 

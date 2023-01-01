@@ -1,5 +1,6 @@
 <?php
 
+use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\Rule;
 use Iljaaa\Machete\rules\validationRules\CallableRule;
@@ -15,11 +16,11 @@ use Iljaaa\Machete\rules\validationRules\CallableRule;
 class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
 {
 
-
     /**
-     *
-     **/
-    public function testDifferentCallableObject ()
+     * Test set callable object as instance
+     * @throws ValidationException
+     */
+    public function testCallableObject ()
     {
         $c = new class {
             public function testValidationMethod($value, string $attribute, Rule $r): bool {
@@ -31,18 +32,40 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($result, 'new stdClass() is valid string');
 
 
-        // todo: static call
-        // todo: this call
-
         $result = (new CallableRule(function ($value, string $attribute, Rule $r) {
             return true;
         }))->validate(123);
         $this->assertTrue($result, 'new stdClass() is valid string');
 
+        // fn
         $result = (new CallableRule(fn ($value, string $attribute, Rule $r) => $r->addError('i sire it\s wrong')->isValid()))->validate(123);
         $this->assertFalse($result, 'new stdClass() is valid string');
     }
 
+    /**
+     * Set collable object as array
+     * @return void
+     * @throws ValidationException
+     */
+    public function testCallableArray()
+    {
+        $result = (new CallableRule([$this, 'successResulCallableFunction']))->validate(123);
+        $this->assertTrue($result);
+
+        $result = (new CallableRule([$this, 'errorResulCallableFunction']))->validate(123);
+        $this->assertFalse($result);
+
+        $result = (new CallableRule([static::class, 'successResulCallableStaticFunction']))->validate(123);
+        $this->assertTrue($result);
+
+        $result = (new CallableRule([static::class, 'errorResulCallableStaticFunction']))->validate(123);
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @return void
+     * @throws ValidationException
+     */
     public function testSetAttributeName()
     {
         $result = (new CallableRule(function ($value, string $attribute, Rule $r)  {
@@ -52,6 +75,10 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($result);
     }
 
+    /**
+     * @return void
+     * @throws ValidationException
+     */
     public function testExceptions ()
     {
         $this->expectException(ValidationException::class);
@@ -62,27 +89,84 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @return void
+     * @throws ValidationException
+     */
+    public function testAssertion ()
+    {
+        // ASSERT_ACTIVE
+        $this->expectException(ValidationException::class);
+
+        $rule = new CallableRule();
+        $this->assertFalse($rule->isValid(), 'wrong result');
+        $this->assertFalse($rule->validate('sASAsAS'), 'wrong result');
+    }
+
+    /**
+     * @return void
+     * @throws RuleConfigurationException
+     */
+    public function testCreateFromFormConfig()
+    {
+        // disable assert
+        assert_options(ASSERT_ACTIVE, 0);
+
+        // not twos
+        $this->expectException(RuleConfigurationException::class);
+        CallableRule::selfCreateFromValidatorConfig(['asdasd', [static::class, 'successResulCallableStaticFunction']]);
+
+        // throws
+        $this->expectException(RuleConfigurationException::class);
+        CallableRule::selfCreateFromValidatorConfig([]);
+
+        $this->expectException(RuleConfigurationException::class);
+        CallableRule::selfCreateFromValidatorConfig(['asdasd', 'dadas']);
+    }
+
+    /**
+     * @return void
+     * @throws RuleConfigurationException
+     */
+    public function testExceptionsOnCreateFromFormConfig()
+    {
+        // disable assert
+        assert_options(ASSERT_ACTIVE, 0);
+
+        // not twos
+        $this->expectException(RuleConfigurationException::class);
+        CallableRule::selfCreateFromValidatorConfig(['asdasd', [static::class, 'successResulCallableStaticFunction']]);
+
+        // throws
+        $this->expectException(RuleConfigurationException::class);
+        CallableRule::selfCreateFromValidatorConfig([]);
+
+        $this->expectException(RuleConfigurationException::class);
+        CallableRule::selfCreateFromValidatorConfig(['aaaa']);
+
+        $this->expectException(RuleConfigurationException::class);
+        CallableRule::selfCreateFromValidatorConfig(['asdasd', 'dadas']);
+    }
+
+    /**
+     * @return void
+     * @throws RuleConfigurationException
+     */
+    public function testAssertsOnCreateFromFormConfig()
+    {
+        // enable assert
+        assert_options(ASSERT_ACTIVE, 1);
+
+        // throws
+        $this->expectNotToPerformAssertions();
+        CallableRule::selfCreateFromValidatorConfig([null, fn () => true]);
+        CallableRule::selfCreateFromValidatorConfig(['', fn () => true]);;
+    }
+
+    /**
      *
      **/
-    public function testDescription ()
+    public function testErrorMessages ()
     {
-        // type
-        // hm we have not erro we can set in
-//        $rule = new CallableRule('sdfsdfsdfsd');
-//        $this->assertFalse($rule->isValid(), 'wrong result');
-//        $this->assertFalse($rule->validate('sASAsAS'), 'wrong result');
-//        $this->assertFalse($rule->isValid(), 'wrong result');
-//        $this->assertEquals("It's not a string", $rule->getFirstError(), 'Wrong first error');
-//        $this->assertEquals(['It\'s not a string'], $rule->getErrors(), 'Wrong errors array');
-
-        // override
-//        $rule = new CallableRule(['wrongType' => 'wrong type error message']);
-//        $this->assertFalse($rule->isValid(), 'wrong result');
-//        $this->assertFalse($rule->validate([]), 'wrong result');
-//        $this->assertFalse($rule->isValid(), 'wrong result');
-//        $this->assertEquals('wrong type error message', $rule->getFirstError(), 'Wrong first error');
-//        $this->assertEquals(['wrong type error message'], $rule->getErrors(), 'Wrong errors array');
-
         // default message
         $rule = (new CallableRule())->setCallableObject(fn() => true);
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -103,6 +187,52 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test error', $rule->getFirstError(), 'Wrong first error');
         $this->assertEquals(['test error'], $rule->getErrors(), 'Wrong errors array');
 
+    }
+
+    /**
+     * @param $value
+     * @param string $attribute
+     * @param Rule $r
+     * @return bool
+     */
+    public function successResulCallableFunction($value, string $attribute, Rule $r): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param $value
+     * @param string $attribute
+     * @param Rule $r
+     * @return bool
+     */
+    public static function successResulCallableStaticFunction($value, string $attribute, Rule $r): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param $value
+     * @param string $attribute
+     * @param Rule $r
+     * @return bool
+     */
+    public function errorResulCallableFunction($value, string $attribute, Rule $r): bool
+    {
+        $r->addError('test error');
+        return $r->isValid();
+    }
+
+    /**
+     * @param $value
+     * @param string $attribute
+     * @param Rule $r
+     * @return bool
+     */
+    public static function errorResulCallableStaticFunction($value, string $attribute, Rule $r): bool
+    {
+        $r->addError('test error');
+        return false;
     }
 
 

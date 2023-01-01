@@ -9,7 +9,7 @@ use Iljaaa\Machete\rules\Rule;
 /**
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.1
+ * @version 1.0.2
  * @package Iljaaa\Machete
  */
 class CallableRule extends Rule
@@ -17,7 +17,7 @@ class CallableRule extends Rule
     /**
      * @var callable
      */
-    private $callableObject = null;
+    private $callableObject;
 
     /**
      * Form field name for pass in callback
@@ -104,21 +104,25 @@ class CallableRule extends Rule
 
     /**
      * @param array $config
-     * @return RegexRule
+     * @return CallableRule
      * @throws RuleConfigurationException
      */
-    public static function selfCreateFromValidatorConfig (array $config): RegexRule
+    public static function selfCreateFromValidatorConfig (array $config): CallableRule
     {
+        assert(empty($config[0]), 'Attribute name is empty, $config[0]');
+        // assert(empty($config[1]), 'Attribute name is empty, $config[0]');
+
         if (empty($config[1])) {
             throw new RuleConfigurationException('Callable parameter empty', null, $config);
         }
 
+        // check callable object
         $callableObject = $config[1];
         if (!is_callable($callableObject)){
             throw new RuleConfigurationException('Object is not callable', null, $config);
         }
 
-        return new RegexRule($callableObject);
+        return new CallableRule($callableObject);
         // if (!empty($config['message'])) $r->setMessage($config['message']);
         // if (!empty($config['message'])) $r->setMessage($config['message']);
     }

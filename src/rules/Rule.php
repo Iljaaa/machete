@@ -38,6 +38,7 @@ abstract class Rule
 
     /**
      * Run value validation
+     * // todo: think, may be do what it method not trow errors
      * @param mixed $value
      * @return bool
      * @throws ValidationException
