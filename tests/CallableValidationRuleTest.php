@@ -90,20 +90,6 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @return void
-     * @throws ValidationException
-     */
-    public function testAssertion ()
-    {
-        // ASSERT_ACTIVE
-        $this->expectException(ValidationException::class);
-
-        $rule = new CallableRule();
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertFalse($rule->validate('sASAsAS'), 'wrong result');
-    }
-
-    /**
-     * @return void
      * @throws RuleConfigurationException
      */
     public function testCreateFromFormConfig()

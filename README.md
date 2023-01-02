@@ -341,6 +341,67 @@ or
 $result = (new CallableRule())->setCallable($callableObject)->validate($value);
 ```
 
+Self role class
+--
+
+Rule validator used for create self validation rules classes
+
+Create class and implements <b>\Iljaaa\Machete\rules\UserRule</b> interface
+
+```php
+['arrribure', 'role', YourRoleClass::class]
+```
+
+Rule interface has only one method
+```php
+public function validate ($value, string $attribute, UserRuleWrapper $userRuleWrapper, Validation $validation): bool;
+```
+
+Where:
+
+- $value - its value for check
+- string $attribute - name of checked form attribute
+- UserRuleWrapper $role - this is instance of of special class for wrap all user roles
+- Validation $validation - validation from instance
+
+If your value is invalid add string error to wrapp and it set validation result to false
+
+```php
+$userRuleWrapper->addError('test error');
+```
+
+Example:
+```php
+class FormValidation extends \Iljaaa\Machete\Validation {
+
+    public string $myAttribute = 'test';
+            
+    public function rules(): array {
+        return [
+            ['myAttribute', 'role', YourRoleClass::class]
+        ];
+    }
+    
+} 
+
+class YourRoleClass implements \Iljaaa\Machete\UserRole {
+
+    public function validate ($value, string $attribute, UserRuleWrapper $userRuleWrapper, Validation $validation): bool
+    {
+        if (empty($value)) 
+        {    
+            $userRuleWrapper->addError('test error');
+            return false;
+        }
+;
+        return true;
+    }
+}
+```
+
+
+
+Also ypu can pass an instance of rules class
 
 Use form state in views
 ==
@@ -365,7 +426,5 @@ To do:
 - array
 - associated array
 - array of accosiated arrays
-- rule lire interface???
-- form rule validation, for self rule
 - update fields errors
 - think about static cache of fields validation state in validator for speed up 

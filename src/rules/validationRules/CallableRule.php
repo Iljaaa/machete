@@ -5,6 +5,7 @@ namespace Iljaaa\Machete\rules\validationRules;
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\BasicRule;
+use Iljaaa\Machete\rules\Rule;
 use Iljaaa\Machete\Validation;
 
 /**

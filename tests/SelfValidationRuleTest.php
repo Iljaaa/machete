@@ -2,8 +2,8 @@
 
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
-use Iljaaa\Machete\rules\BasicRule;
-use Iljaaa\Machete\rules\validationRules\CallableRule;
+use Iljaaa\Machete\rules\UserRuleWrapper;
+use Iljaaa\Machete\Validation;
 
 /**
  * Test implement rule interface
@@ -13,67 +13,98 @@ use Iljaaa\Machete\rules\validationRules\CallableRule;
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
-class SelfeValidationRuleTest extends \PHPUnit\Framework\TestCase
+class SelfValidationRuleTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
      * Test set callable object as instance
-     * @throws ValidationException
      */
-    public function testCallableObject ()
+    public function testUserRoleAsInstance()
     {
-        $c = new class {
-            public function testValidationMethod($value, string $attribute, BasicRule $r): bool {
-                return true;
+        $form = new class extends \Iljaaa\Machete\Validation
+        {
+            public string $name = 'test';
+
+            private \Iljaaa\Machete\rules\UserRule $rule;
+
+            public function __construct ()
+            {
+                parent::__construct();
+
+                $this->rule = new class implements \Iljaaa\Machete\rules\UserRule {
+
+                    public function validate ($value, string $attribute, UserRuleWrapper $userRuleWrapper, Validation $validation): bool
+                    {
+                        $userRuleWrapper->addError('test error');
+                        return false;
+                    }
+
+                };
             }
+
+            public function rules (): array
+            {
+                return [
+                    [['test'], 'rule', $this->rule]
+                ];
+            }
+
         };
 
-        $result = (new CallableRule([$c, 'testValidationMethod']))->validate(123);
-        $this->assertTrue($result, 'new stdClass() is valid string');
 
+        $this->assertFalse($form->isValid(), 'wrong result');
+        $this->assertFalse($form->validate(), 'wrong result');
+        $this->assertFalse($form->isValid(), 'wrong result');
+        $this->assertEquals('test error', $form->getFirstError(), 'Wrong first error');
+        $this->assertEquals(['test' => ['test error']], $form->getErrors(), 'Wrong errors array');
+        $this->assertEquals(['test error'], $form->getErrorsForAttribute('test'), 'Wrong errors array');
+        $this->assertEquals('test error', $form->getFirstErrorForAttribute('test'), 'Wrong errors array');
 
-        $result = (new CallableRule(function ($value, string $attribute, BasicRule $r) {
-            return true;
-        }))->validate(123);
-        $this->assertTrue($result, 'new stdClass() is valid string');
-
-        // fn
-        $result = (new CallableRule(fn ($value, string $attribute, BasicRule $r) => $r->addError('i sire it\s wrong')->isValid()))->validate(123);
-        $this->assertFalse($result, 'new stdClass() is valid string');
     }
+
 
     /**
-     * Set collable object as array
-     * @return void
-     * @throws ValidationException
+     * Test set callable object as instance
      */
-    public function testCallableArray()
+    public function testRuleAsInstance ()
     {
-        $result = (new CallableRule([$this, 'successResulCallableFunction']))->validate(123);
-        $this->assertTrue($result);
+        $form = new class extends \Iljaaa\Machete\Validation
+        {
+            public string $name = 'test';
 
-        $result = (new CallableRule([$this, 'errorResulCallableFunction']))->validate(123);
-        $this->assertFalse($result);
+            private \Iljaaa\Machete\rules\UserRule $rule;
 
-        $result = (new CallableRule([static::class, 'successResulCallableStaticFunction']))->validate(123);
-        $this->assertTrue($result);
+            public function __construct ()
+            {
+                parent::__construct();
 
-        $result = (new CallableRule([static::class, 'errorResulCallableStaticFunction']))->validate(123);
-        $this->assertFalse($result);
+                $this->rule = new class implements \Iljaaa\Machete\rules\UserRule {
+
+                    public function validate ($value, string $attribute, UserRuleWrapper $userRuleWrapper, Validation $validation): bool
+                    {
+                        return true;
+                    }
+
+                };
+            }
+
+            public function rules (): array
+            {
+                return [
+                    [['name'], 'rule', $this->rule]
+                ];
+            }
+
+        };
+
+
+        $this->assertFalse($form->isValid(), 'wrong result');
+        $this->assertTrue($form->validate(), 'wrong result');
+        $this->assertTrue($form->isValid(), 'wrong result');
+        $this->assertEquals('', $form->getFirstError(), 'Wrong first error');
+        $this->assertEquals([], $form->getErrors(), 'Wrong errors array');
     }
 
-    /**
-     * @return void
-     * @throws ValidationException
-     */
-    public function testSetAttributeName()
-    {
-        $result = (new CallableRule(function ($value, string $attribute, BasicRule $r)  {
-            $this->assertEquals('testAttribute', $attribute, 'wrong attribute');
-            return true;
-        }))->setAttributeName("testAttribute")->validate(123);
-        $this->assertTrue($result);
-    }
 
     /**
      * @return void
@@ -81,23 +112,12 @@ class SelfeValidationRuleTest extends \PHPUnit\Framework\TestCase
      */
     public function testExceptions ()
     {
+        // disable assert
+        assert_options(ASSERT_ACTIVE, 0);
+
         $this->expectException(ValidationException::class);
 
-        $rule = new CallableRule();
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertFalse($rule->validate('sASAsAS'), 'wrong result');
-    }
-
-    /**
-     * @return void
-     * @throws ValidationException
-     */
-    public function testAssertion ()
-    {
-        // ASSERT_ACTIVE
-        $this->expectException(ValidationException::class);
-
-        $rule = new CallableRule();
+        $rule = new UserRuleWrapper();
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('sASAsAS'), 'wrong result');
     }
@@ -113,15 +133,15 @@ class SelfeValidationRuleTest extends \PHPUnit\Framework\TestCase
 
         // not twos
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig(['asdasd', [static::class, 'successResulCallableStaticFunction']]);
-        CallableRule::selfCreateFromValidatorConfig([['asdasd'], [static::class, 'successResulCallableStaticFunction']]);
+        UserRuleWrapper::selfCreateFromValidatorConfig(['asdasd', 'rule', TestRuleClass::class]);
+        UserRuleWrapper::selfCreateFromValidatorConfig([['asdasd'], 'rule', 'rule' => TestRuleClass::class]);
 
         // throws
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig([]);
+        UserRuleWrapper::selfCreateFromValidatorConfig([]);
 
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig(['asdasd', 'dadas']);
+        UserRuleWrapper::selfCreateFromValidatorConfig(['asdasd', 'dadas']);
     }
 
     /**
@@ -134,18 +154,18 @@ class SelfeValidationRuleTest extends \PHPUnit\Framework\TestCase
         assert_options(ASSERT_ACTIVE, 0);
 
         // not twos
-        $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig(['asdasd', [static::class, 'successResulCallableStaticFunction']]);
+        // $this->expectException(RuleConfigurationException::class);
+        UserRuleWrapper::selfCreateFromValidatorConfig(['asdasd', 'rule', TestRuleClass::class]);
 
         // throws
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig([]);
+        UserRuleWrapper::selfCreateFromValidatorConfig([]);
 
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig(['aaaa']);
+        UserRuleWrapper::selfCreateFromValidatorConfig(['aaaa']);
 
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig(['asdasd', 'dadas']);
+        UserRuleWrapper::selfCreateFromValidatorConfig(['asdasd', 'dadas']);
     }
 
     /**
@@ -160,83 +180,93 @@ class SelfeValidationRuleTest extends \PHPUnit\Framework\TestCase
         // throws
         $this->expectError();
         // $this->expectNotToPerformAssertions();
-        CallableRule::selfCreateFromValidatorConfig([null, fn () => true]);
-        CallableRule::selfCreateFromValidatorConfig(['', fn () => true]);
+        UserRuleWrapper::selfCreateFromValidatorConfig([null, fn () => true]);
+        UserRuleWrapper::selfCreateFromValidatorConfig(['', fn () => true]);
     }
 
-    /**
-     *
-     **/
-    public function testErrorMessages ()
-    {
-        // default message
-        $rule = (new CallableRule())->setCallable(fn() => true);
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertTrue($rule->validate('asdasdaskjdbasjhdvkasjdv'), 'wrong result');
-        $this->assertTrue($rule->isValid(), 'wrong result');
-        $this->assertEquals('', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals([], $rule->getErrors(), 'Wrong errors array');
-
-        // override message
-        // $rule = (new CallableRule(fn() => true));
-        $rule = new CallableRule(function ($value, string $attribute, BasicRule $r) {
-            $r->addError('test error');
-            return false;
-        });
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertFalse($rule->validate('asdasdaskjdbasjhdvkasjdv'), 'wrong result');
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('test error', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['test error'], $rule->getErrors(), 'Wrong errors array');
-
-    }
 
     /**
-     * @param $value
-     * @param string $attribute
-     * @param BasicRule $r
-     * @return bool
+     * Test set callable object as instance
      */
-    public function successResulCallableFunction($value, string $attribute, BasicRule $r): bool
+    public function testErrorMessages()
     {
-        return true;
-    }
+        $form = new class extends \Iljaaa\Machete\Validation
+        {
+            public string $name = 'test';
+            public string $sName = '';
 
-    /**
-     * @param $value
-     * @param string $attribute
-     * @param BasicRule $r
-     * @return bool
-     */
-    public static function successResulCallableStaticFunction($value, string $attribute, BasicRule $r): bool
-    {
-        return true;
-    }
+            private \Iljaaa\Machete\rules\UserRule $rule;
 
-    /**
-     * @param $value
-     * @param string $attribute
-     * @param BasicRule $r
-     * @return bool
-     */
-    public function errorResulCallableFunction($value, string $attribute, BasicRule $r): bool
-    {
-        $r->addError('test error');
-        return $r->isValid();
-    }
+            public function __construct ()
+            {
+                parent::__construct();
 
-    /**
-     * @param $value
-     * @param string $attribute
-     * @param BasicRule $r
-     * @return bool
-     */
-    public static function errorResulCallableStaticFunction($value, string $attribute, BasicRule $r): bool
-    {
-        $r->addError('test error');
-        return false;
+                $this->rule = new class implements \Iljaaa\Machete\rules\UserRule {
+
+                    public function validate ($value, string $attribute, UserRuleWrapper $userRuleWrapper, Validation $validation): bool
+                    {
+                        if (empty($value)) {
+                            return $userRuleWrapper->addError('test error')->isValid();
+                        }
+
+                        return $userRuleWrapper->isValid();
+                    }
+
+                };
+            }
+
+            public function rules (): array
+            {
+                return [
+                    [['name'], 'rule', $this->rule],
+                    [['sName'], 'rule', $this->rule],
+                ];
+            }
+
+        };
+
+
+        $this->assertFalse($form->isValid(), 'wrong result');
+        $this->assertFalse($form->validate(), 'wrong result');
+        $this->assertFalse($form->isValid(), 'wrong result');
+        $this->assertEquals('test error', $form->getFirstError(), 'Wrong first error');
+        $this->assertEquals(['sName' => ['test error']], $form->getErrors());
+        $this->assertEquals([], $form->getErrorsForAttribute('test'));
+        $this->assertEquals([], $form->getErrorsForAttribute('name'));
+        $this->assertEquals(['test error'], $form->getErrorsForAttribute('sName'));
+        $this->assertEquals('test error', $form->getFirstErrorForAttribute('sName'));
+
+        $this->assertFalse($form->isValid(), 'wrong result');
+        $this->assertFalse($form->validate(['sName']), 'wrong result');
+        $this->assertFalse($form->isValid(), 'wrong result');
+        $this->assertEquals('test error', $form->getFirstError(), 'Wrong first error');
+        $this->assertEquals(['sName' => ['test error']], $form->getErrors());
+        $this->assertEquals([], $form->getErrorsForAttribute('test'));
+        $this->assertEquals([], $form->getErrorsForAttribute('name'));
+        $this->assertEquals(['test error'], $form->getErrorsForAttribute('sName'));
+        $this->assertEquals('test error', $form->getFirstErrorForAttribute('sName'));
+
+        $this->assertFalse($form->isValid(), 'wrong result');
+        $this->assertFalse($form->validate(['name']), 'wrong result');
+        $this->assertFalse($form->isValid(), 'wrong result');
+        $this->assertEquals('', $form->getFirstError(), 'Wrong first error');
+        $this->assertEquals([], $form->getErrors());
+        $this->assertEquals([], $form->getErrorsForAttribute('test'));
+        $this->assertEquals([], $form->getErrorsForAttribute('name'));
+        $this->assertEquals([], $form->getErrorsForAttribute('sName'));
+        $this->assertEquals('', $form->getFirstErrorForAttribute('sName'));
+
     }
 
 
 }
 
+
+class TestRuleClass implements \Iljaaa\Machete\rules\UserRule
+{
+    public function validate ($value, string $attribute, UserRuleWrapper $userRuleWrapper, Validation $validation): bool
+    {
+        return false;
+    }
+
+}

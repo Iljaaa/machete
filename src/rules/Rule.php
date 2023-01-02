@@ -9,7 +9,7 @@ use Iljaaa\Machete\Validation;
  * Form rule interface
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.0
+ * @version 1.0.2
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -24,5 +24,18 @@ interface Rule
      * @throws ValidationException
      */
     public function validate ($value, ?string $attribute = null, ?Validation $validation = null): bool;
+
+    /**
+     * Method called when Validator create collection of instances of validator rules
+     *
+     * Method mast:
+     * - create your rule class instance
+     * - parametrize it
+     * - and return
+     *
+     * @param array $config Config array from roles method description
+     * @return Rule
+     */
+    // public static function selfCreateFromValidatorConfig (array $config): Rule;
 
 }

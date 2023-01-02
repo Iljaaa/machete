@@ -88,10 +88,10 @@ class RulesCollection implements \Iterator
      * Create rule object from array getted from validation::roles
      *
      * @param array $ruleConfig
-     * @return BasicRule
+     * @return Rule
      * @throws RuleConfigurationException
      */
-    public static function makeRuleFromValidatorConfigArray (array $ruleConfig): BasicRule
+    public static function makeRuleFromValidatorConfigArray (array $ruleConfig): Rule
     {
         // check field name
 
@@ -108,6 +108,7 @@ class RulesCollection implements \Iterator
             if (!$r) {
                 throw new RuleConfigurationException(sprintf('Validation rule vas not created by string "%s"', $rule));
             }
+
             return $r;
         }
 
@@ -122,10 +123,10 @@ class RulesCollection implements \Iterator
     /**
      * @param string $rule
      * @param array $ruleConfig
-     * @return null|BasicRule
+     * @return Rule
      * @throws RuleConfigurationException
      */
-    private static function makeRuleFromString (string $rule, array $ruleConfig): ?BasicRule
+    private static function makeRuleFromString (string $rule, array $ruleConfig): ?Rule
     {
         switch ($rule) {
             case 'string'   : return new StringRule($ruleConfig);
@@ -135,6 +136,7 @@ class RulesCollection implements \Iterator
             // case 'number'   : return new RequiredValidationRule($ruleConfig);
             case 'in'       : return InRule::selfCreateFromValidatorConfig($ruleConfig);
             case 'regex'    : return RegexRule::selfCreateFromValidatorConfig($ruleConfig);
+            case 'rule'     : return UserRuleWrapper::selfCreateFromValidatorConfig($ruleConfig);
         }
 
         return null;

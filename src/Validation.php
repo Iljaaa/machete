@@ -4,9 +4,8 @@ namespace Iljaaa\Machete;
 
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\AttributeRule;
-use Iljaaa\Machete\rules\BasicRule;
 use Iljaaa\Machete\rules\RulesCollection;
-use Iljaaa\Machete\rules\validationRules\CallableRule;
+use Iljaaa\Machete\rules\UserRuleWrapper;
 
 /**
  * Its Validation class
@@ -171,10 +170,13 @@ abstract class Validation
             // check is field is need validate
             $value = $this->getValue($attribute);
 
-            // validation one field
-            if ($aRule->getRule()->validate($value) == false) {
+            $rule = $aRule->getRule();
+
+            // run validaton
+            if (!$rule->validate($value, $attribute, $this)) {
                 $this->result->setIsValid(false);
             }
+
         }
 
         // sava validated rules in result
