@@ -100,7 +100,7 @@ Rules method
 ==
 Its the only one abstract method to be implemented.
 
-Rules method mast return array of named arrays, every named array descript one validation role. It mas be in save sintaxis
+Rules method mast return array of named arrays, every named array descript one validation rule. It mas be in save sintaxis
 
 ```php
 public function rules(): array 
@@ -185,12 +185,12 @@ additional params:
 string 
 --
 
-string rule use ms_strlen function for calculate string length
+String rule use ms_strlen function for calculate string length.<br />
 
-before check other rules string check is_string function. 
-if they return false, you has false result of validation and error from 'wrongType' param
+Before check other rules string rule check values is_string function. 
+And if it return false, you get false result of validation and error from 'wrongType' param
 
-string additional params
+string config array
 
 | Param     | type   | Are                                      | Default            |
 |-----------|--------|:-----------------------------------------|:-------------------|
@@ -199,6 +199,33 @@ string additional params
 | wrongType | string | error message if you try check no string | It's not a string  |
 | toShort   | string |                                          | To short           |
 | toLong    | string |                                          | To long            |
+
+When you override default error messages you can use named variables who vas be replaced
+
+<b>wrongType</a> 
+- :attribute - from attribute name
+
+<b>toShort</a> 
+- :attribute - from attribute name
+- :short - min len for check: example: ":attribute, min :short chars length"
+
+<b>toShort</a> 
+- :attribute - from attribute name
+- :long - max len for check: example: ":attribute, min :long chars length"
+
+manual use
+--
+
+```php
+$result = (new StringRule())
+    ->setMin($minIntOfFloat)
+    ->setMax($maxIntAndFloat)
+    ->setWrongType('value in not a string')
+    ->setToShort('value to short');
+    ->setToLong('value to long');
+    ->validate($needle);
+```
+
 
 int & float
 ==
@@ -222,15 +249,12 @@ manual use
 --
 
 ```php
-$result = (new InValidationRule())->validate($value);
-or
 $result = (new InValidationRule())
     ->setMin($minIntOfFloat)
     ->setMax($maxIntAndFloat)
-    ->setToSmall();
-    ->setToBig();
+    ->setToSmall('value to small');
+    ->setToBig('value to big');
     ->validate($needle);
-
 ```
 
 in
@@ -296,8 +320,6 @@ $result = (new RegexValidationRule())->setHaystack($regexPattern)->validate($nee
 Self validation functions
 ==
 
-No content here, 
-
 Callable
 --
 
@@ -306,7 +328,7 @@ like this
 ['name', function () {}]
 
 or
-['name', fn ($value, string $attribute, Role $rol) => true, ....]
+['name', fn ($value, string $attribute, Rule $rol) => true, ....]
 
 
 | Param     | type   | Are                           | Default |
@@ -326,13 +348,13 @@ validation state on false.
 This object was be called with params
 
 ```php
-yoreValidationFunction($value, ?string $attribute, Role $role): bool
+yoreValidationFunction($value, ?string $attribute, Rule $rule): bool
 ```
 
 Where:
 - $value - its value for check
 - string $attribute - name of checked attribute
-- Role $role - instance of CallableValidationRule class
+- Rule $rule - instance of CallableValidationRule class
 
 Manual use:
 ```php
@@ -341,15 +363,16 @@ or
 $result = (new CallableRule())->setCallable($callableObject)->validate($value);
 ```
 
-Self role class
+Self rule
 --
 
-Rule validator used for create self validation rules classes
+For create your own validation rule class, 
+you need create class and implements <b>\Iljaaa\Machete\rules\UserRule</b> interface
 
-Create class and implements <b>\Iljaaa\Machete\rules\UserRule</b> interface
+Then you can use rule in validator lite this:
 
 ```php
-['arrribure', 'role', YourRoleClass::class]
+['attribure', 'rule', YourRuleClass::class]
 ```
 
 Rule interface has only one method
@@ -361,30 +384,20 @@ Where:
 
 - $value - its value for check
 - string $attribute - name of checked form attribute
-- UserRuleWrapper $role - this is instance of of special class for wrap all user roles
+- UserRuleWrapper $userRuleWrapper - this is instance of of special interface for wrap all user rules
 - Validation $validation - validation from instance
 
-If your value is invalid add string error to wrapp and it set validation result to false
+If your value is invalid add string error to wrap and it also set validation result to false
 
 ```php
 $userRuleWrapper->addError('test error');
 ```
 
-Example:
+
+
+Example of rule class:
 ```php
-class FormValidation extends \Iljaaa\Machete\Validation {
-
-    public string $myAttribute = 'test';
-            
-    public function rules(): array {
-        return [
-            ['myAttribute', 'role', YourRoleClass::class]
-        ];
-    }
-    
-} 
-
-class YourRoleClass implements \Iljaaa\Machete\UserRole {
+class YourRuleClass implements \Iljaaa\Machete\rules\UserRule {
 
     public function validate ($value, string $attribute, UserRuleWrapper $userRuleWrapper, Validation $validation): bool
     {
@@ -399,9 +412,42 @@ class YourRoleClass implements \Iljaaa\Machete\UserRole {
 }
 ```
 
+Self form validation class
+--
 
+For create self class just extend <b>\Iljaaa\Machete\Validation</b>
 
-Also ypu can pass an instance of rules class
+It's abstract class and it has one abstract method <b>rules(): array</b>
+for return array ob validation rule
+
+Full example self rule in self class:
+```php
+class FormValidation extends \Iljaaa\Machete\Validation {
+
+    public string $myAttribute = 'test';
+            
+    public function rules(): array {
+        return [
+            ['myAttribute', 'rule', YourRuleClass::class]
+        ];
+    }
+    
+} 
+
+class YourRuleClass implements \Iljaaa\Machete\UserRule {
+
+    public function validate ($value, string $attribute, UserRuleWrapper $userRuleWrapper, Validation $validation): bool
+    {
+        if (empty($value)) 
+        {    
+            $userRuleWrapper->addError('test error');
+            return false;
+        }
+;
+        return true;
+    }
+}
+```
 
 Use form state in views
 ==

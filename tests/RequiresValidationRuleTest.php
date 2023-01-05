@@ -25,7 +25,7 @@ class RequiresValidationRuleTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     *
+     * test different
      **/
     public function testValues ()
     {

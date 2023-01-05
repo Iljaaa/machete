@@ -5,7 +5,6 @@ namespace Iljaaa\Machete;
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\AttributeRule;
 use Iljaaa\Machete\rules\RulesCollection;
-use Iljaaa\Machete\rules\UserRuleWrapper;
 
 /**
  * Its Validation class

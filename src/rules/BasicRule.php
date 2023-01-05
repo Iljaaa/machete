@@ -7,7 +7,7 @@ namespace Iljaaa\Machete\rules;
  * Implement basic methods
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.3
+ * @version 1.0.4
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -60,6 +60,17 @@ abstract class BasicRule implements Rule
     public function getFirstError(): string
     {
         return $this->validationResult->getFirstError();
+    }
+
+    /**
+     * Replace params in string
+     * @param string $str
+     * @param array $namedParams
+     * @return void
+     */
+    protected static function makeFormErrorString (string $str, array $namedParams): string
+    {
+        return strtr($str, $namedParams);
     }
 
 }

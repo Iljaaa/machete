@@ -45,6 +45,11 @@ class RulesCollection implements \Iterator
             // make attributes array
             $attributes = static::makeAttributesArrayFromRuleConfig($ruleConfig);
 
+            //
+            if (empty($attributes)) {
+                throw new ValidationException("Rule data have not attribute description");
+            }
+
             foreach ($attributes as $attr)
             {
                 // make role validator
@@ -70,10 +75,10 @@ class RulesCollection implements \Iterator
      * @return array
      * @throws ValidationException
      */
-    private static function makeAttributesArrayFromRuleConfig (array $ruleConfig): array
+    public static function makeAttributesArrayFromRuleConfig (array $ruleConfig): array
     {
         if (empty($ruleConfig[0])) {
-            throw new ValidationException("Rule data have not attribute description");
+            return [];
         }
 
         $field = $ruleConfig[0];
@@ -93,8 +98,6 @@ class RulesCollection implements \Iterator
      */
     public static function makeRuleFromValidatorConfigArray (array $ruleConfig): Rule
     {
-        // check field name
-
         // check validator exist
         if (empty($ruleConfig[1])) {
             throw new RuleConfigurationException('Validation rule not set');
@@ -129,7 +132,7 @@ class RulesCollection implements \Iterator
     private static function makeRuleFromString (string $rule, array $ruleConfig): ?Rule
     {
         switch ($rule) {
-            case 'string'   : return new StringRule($ruleConfig);
+            case 'string'   : return StringRule::selfCreateFromValidatorConfig($ruleConfig);
             case 'required' : return RequiredRule::selfCreateFromValidatorConfig($ruleConfig);
             case 'int'      : return IntRule::selfCreateFromValidatorConfig($ruleConfig);
             case 'float'    : return FloatRule::selfCreateFromValidatorConfig($ruleConfig);

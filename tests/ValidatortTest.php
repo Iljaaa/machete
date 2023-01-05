@@ -9,7 +9,7 @@ require(__DIR__.'/../vendor/autoload.php');
  *
  * @author ilja <the.ilja@gmail.com>
  * @package Iljaaa\Machete
- * @version 1.0.2
+ * @version 1.0.3
  * @see https://github.com/Iljaaa/machete
  */
 class ValidatorTest extends \PHPUnit\Framework\TestCase
@@ -124,7 +124,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      {
          $validator = new class extends Validation
          {
-             protected string $name = 'sdkjasasdasd';
+             protected string $name = 'my test name';
 
              public function rules(): array
              {
@@ -228,7 +228,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             public function rules(): array
             {
                 return [
-                    [['name'], 'string', 'min' => 7, 'toShort' => 'name to short'],
+                    [['name'], 'string', 'min' => 7, 'toShort' => ':attribute to short'],
                     [['name'], [$this, 'nonStaticValidateMethod']],
                     [['name'], [ValidatorTest::class, 'functionForTestStaticCallAddError']],
                     [['shortString'], 'string', 'max' => 3, 'toLong' => 'Short field to long'],
@@ -263,8 +263,8 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(3, $attributeErrors, 'wrong errors count');
 
         $attributeFirstError = $validator->getFirstErrorForAttribute('name');
-        $this->assertIsString($attributeFirstError, 'errors must be array');
-        $this->assertNotEmpty($attributeFirstError, 'error is empty');
+        $this->assertIsString($attributeFirstError);
+        $this->assertNotEmpty($attributeFirstError);
 
         $shortStringErrors = $validator->getErrorsForAttribute('shortString');
         $this->assertIsArray($shortStringErrors, 'errors must be array');
