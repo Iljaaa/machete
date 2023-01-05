@@ -230,20 +230,22 @@ $result = (new StringRule())
 int & float
 ==
 
-Int vas auto converted into float
+If you use float validator and pas to validate function int value, 
+it vas auto converted to int. All other types will be not coverted 
+and you get wrong type error  
 
 ```php
 ['attribute',  'float', ....]
 ['attribute',  'int', ....]
 ```
 
-| Param     | type   | Are                                      | Default            |
-|-----------|--------|:-----------------------------------------|:-------------------|
-| min       | int    | minimum string length for check          | null               |
-| min       | int    | maximum string                           | null               |
-| wrongType | string |                                          |                    |
-| toSmall   | string |                                          | To short           |
-| toBig     | string |                                          | To long            |
+| Param     | type   | Are                             | Default for int    | Default for float |
+|-----------|--------|:--------------------------------|:-------------------|-------------------|
+| min       | int    | minimum string length for check | null               |                   |
+| min       | int    | maximum string                  | null               |                   |
+| wrongType | string |                                 | It is not a string | It is not a float |
+| toSmall   | string |                                 | To small           |                   |
+| toBig     | string |                                 | To big             |                   |
 
 manual use
 --

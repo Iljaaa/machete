@@ -2,76 +2,38 @@
 
 namespace Iljaaa\Machete\rules\validationRules;
 
-use Iljaaa\Machete\rules\Rule;
+use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\Validation;
 
 /**
  * Float validation rule
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.1
+ * @version 2.0.1
  * @package Iljaaa\Machete
  */
 class FloatRule extends NumericValidationBasicRule
 {
-    /**
-     * Min and max size of string
-     * @var float|null
-     */
-    protected ?float $min = null, $max = null;
 
-    /**
-     * Wrong type error message
-     * @var string
-     */
-    private string $wrongType = "It's not int";
+    public function __construct ()
+    {
+        parent::__construct();
+
+        $this->setWrongType('It\'s not float');
+    }
 
     /**
      * @param array $config
      * @return FloatRule
+     * @throws ValidationException
      */
     public static function selfCreateFromValidatorConfig (array $config): FloatRule
     {
         $r = new static();
 
-        if (isset($config['min'])) $r->setMin((float) $config['min']);
-        if (!empty($config['max'])) $r->setMax((float) $config['max']);
-
-        if (!empty($config['wrongType'])) $r->setWrongType($config['wrongType']);
-        if (!empty($config['toSmall'])) $r->setToSmall($config['toSmall']);
-        if (!empty($config['toBig'])) $r->setToBig($config['toBig']);
+        static::updateNumericRule($r, $config);
 
         return $r;
-    }
-
-    /**
-     * @param float $min
-     * @return FloatRule
-     */
-    public function setMin (float $min): FloatRule
-    {
-        $this->min = $min;
-        return $this;
-    }
-
-    /**
-     * @param float $max
-     * @return FloatRule
-     */
-    public function setMax (float $max): FloatRule
-    {
-        $this->max = $max;
-        return $this;
-    }
-
-    /**
-     * @param string $wrongType
-     * @return FloatRule
-     */
-    public function setWrongType (string $wrongType): FloatRule
-    {
-        $this->wrongType = $wrongType;
-        return $this;
     }
 
     /**
@@ -81,24 +43,24 @@ class FloatRule extends NumericValidationBasicRule
     {
         if(is_int($value)) $value = (float) $value;
 
-        if (!is_float($value)){
-            $this->validationResult->addError($this->wrongType);
+        // if (!is_float($value)){
+        if (!filter_var($value, FILTER_VALIDATE_FLOAT)){
+            $this->validationResult->addError($this->getWrongType());
             return false;
         }
 
         // drop to default true value
         $this->validationResult->setIsValid();
 
-        // min max length
-        if ($this->min != null || $this->max != null)
-        {
-            if ($this->min !== null && $value < $this->min) {
-                $this->validationResult->addError($this->toSmall);
-            }
+        // validate min|max
+        $min = $this->getMin();
+        if ($min !== null && $min > $value) {
+            $this->validationResult->addError($this->getToSmall());
+        }
 
-            if ($this->max != null && $value > $this->max) {
-                $this->validationResult->addError($this->toBig);
-            }
+        $max = $this->getMax();
+        if ($max !== null && $max < $value) {
+            $this->validationResult->addError($this->getToBig());
         }
 
         return $this->validationResult->isValid();

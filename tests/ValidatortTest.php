@@ -33,8 +33,8 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                      [['myNameWho'], 'string'],
                      [['myNameWho'], 'required', 'message' => 'Its required field'],
                      [['myNameWho'], 'regex', '/^S/'],
-                     [['number'], 'int', "min" => 5],
-                     [['number'], 'float', "min" => 5],
+                     [['number'], 'int', "min" => 7],
+                     [['number'], 'float', "min" => 7],
                      [['notset'], 'required'],
                      [['valid'], 'required'],
                      ['phones', 'in', ['345', '123', '333']],
@@ -58,7 +58,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
          $this->assertFalse($validator->isValid());
          $this->assertFalse($validator->isValid(), 'is validate flag wrong 2');
 
-         $this->assertFalse($validator->isAttributeValid('string'), );
+         $this->assertFalse($validator->isAttributeValid('string'));
          $this->assertTrue($validator->isAttributeValid('number'));
          $this->assertFalse($validator->isAttributeValid('notset'));
          $this->assertTrue($validator->isAttributeValid('valid'));
