@@ -2,18 +2,16 @@
 
 namespace Iljaaa\Machete\exceptions;
 
-use Iljaaa\Machete\rules\Rule;
-
 /**
  * If something wrong with config
+ *
+ * @author ilja <the.ilja@gmail.com>
+ * @version 1.0.1
+ * @package Iljaaa\Machete
+ * @see https://github.com/Iljaaa/machete
  */
 class RuleConfigurationException extends ValidationException
 {
-    /**
-     * Ru;e instance
-     */
-    private ?Rule $rule;
-
     /**
      * Rule form config
      * @var array|null
@@ -22,22 +20,12 @@ class RuleConfigurationException extends ValidationException
 
     /**
      * @param string $message
-     * @param Rule|null $rule handled role
      * @param array|null $roleConfig config of role
      */
-    public function __construct (string $message, ?Rule $rule = null, ?array $roleConfig = null)
+    public function __construct (string $message, ?array $roleConfig = null)
     {
         parent::__construct($message);
-        $this->rule = $rule;
         $this->roleConfig = $roleConfig;
-    }
-
-    /**
-     * @return Rule|null
-     */
-    public function getRule (): ?Rule
-    {
-        return $this->rule;
     }
 
     /**

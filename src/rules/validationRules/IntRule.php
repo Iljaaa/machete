@@ -3,9 +3,7 @@
 namespace Iljaaa\Machete\rules\validationRules;
 
 use Iljaaa\Machete\exceptions\ValidationException;
-use Iljaaa\Machete\rules\RulesCollection;
 use Iljaaa\Machete\Validation;
-use PHPUnit\Util\Exception;
 
 /**
  * Integer validation rule
@@ -14,6 +12,7 @@ use PHPUnit\Util\Exception;
  * @version 1.0.1
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
+ * @see https://www.php.net/manual/en/filter.filters.validate.php
  */
 class IntRule extends NumericValidationBasicRule
 {

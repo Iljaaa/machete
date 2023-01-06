@@ -259,6 +259,31 @@ $result = (new InValidationRule())
     ->validate($needle);
 ```
 
+date and datetime
+==
+
+Used for check from datetime field values and \DateTime 
+objects
+
+Same validator with diffrents format
+- data:
+- datetime: 
+
+
+| Param     | type      | Are          | Default value |
+|-----------|-----------|:-------------|:--------------|
+| min       | \DateTime | minimal date | null          |
+| min       | \DateTime | maximal date | null          |
+
+Error messages
+
+| Param       | type   | Default                           |
+|-------------|--------|:----------------------------------|
+| wrongType   | string | :attribute is not available value |
+| wrongFormat | string | :attribute has wrong :format      |
+| beforeMin   | string | :attribute is before :min value   |
+| afterMax    | string | :attribute is before :max value   |
+
 in
 ==
 synthesis of config array
@@ -467,12 +492,9 @@ if ($form->isVasValidate() && $form->isAttributeValid('attribute') == false) {
 ```
 
 To do:
-- write normal description to exception classes
-- int, float - remake to use filters https://www.php.net/manual/en/filter.filters.validate.php
-- date??? date as string with excepted format YYYY-MM-DD by pattern 2022-12-31, 2-3-2
-- assert attribute for create form function 
+- assert attribute for create form function
+- update fields errors
 - array
 - associated array
 - array of accosiated arrays
-- update fields errors
 - think about static cache of fields validation state in validator for speed up 

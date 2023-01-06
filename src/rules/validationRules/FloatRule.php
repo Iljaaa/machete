@@ -11,6 +11,7 @@ use Iljaaa\Machete\Validation;
  * @author ilja <the.ilja@gmail.com>
  * @version 2.0.1
  * @package Iljaaa\Machete
+ * @see https://www.php.net/manual/en/filter.filters.validate.php
  */
 class FloatRule extends NumericValidationBasicRule
 {
