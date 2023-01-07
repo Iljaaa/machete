@@ -4,7 +4,6 @@ namespace Iljaaa\Machete\rules\validationRules;
 
 use DateTime;
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
-use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\BasicRule;
 use Iljaaa\Machete\rules\RulesCollection;
 use Iljaaa\Machete\Validation;
@@ -239,10 +238,7 @@ abstract class DatesValidationBasicRule extends BasicRule
             $value = $value->format($format);
         }
 
-        // set return value as true and clear errors
-        // its not good practice
-        // but if we set RuleValidationResult.isValid default true
-        // we were wrong return on not validate value
+        // drop default result to true, and clean errors
         $this->validationResult->setIsValid();
 
         if (!is_string($value)) {
@@ -275,11 +271,11 @@ abstract class DatesValidationBasicRule extends BasicRule
      * @param array $config
      * @return DatesValidationBasicRule
      * @throws RuleConfigurationException throws when config success all asserts but config still wrong
-     * @throws ValidationException
      */
     public static function selfCreateFromValidatorConfig(array $config): DatesValidationBasicRule
     {
         // assert($config[1], 'DateTimeRule required $config[1] = date || datetime');
+        assert(isset($config[1]), 'DateTimeRule required $config[1] = date || datetime');
         assert(is_string($config[1]), 'DateTimeRule required $config[1] = date || datetime');
 
         $attributes = RulesCollection::makeAttributesArrayFromRuleConfig($config);

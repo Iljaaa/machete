@@ -1,7 +1,8 @@
-# machete
-Another validation library
+# Machete
 
-PHP version 7.4, not tested on version 8. but he must be fine
+Another PHP validation library
+
+Written for PHP 7.4. Not tested on version 8, but he must be fine
 
 ! Machete don't applies any prefilters on yore data and modified it. 
 

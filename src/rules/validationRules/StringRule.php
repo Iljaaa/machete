@@ -134,7 +134,7 @@ class StringRule extends BasicRule
         assert($attributes, 'Attribute name is empty, $config[0]');
 
         if (empty($attributes)) {
-            throw new RuleConfigurationException('Attribute name is empty', null, $config);
+            throw new RuleConfigurationException('Attribute name is empty', $config);
         }
 
         $r = new StringRule();
@@ -181,10 +181,7 @@ class StringRule extends BasicRule
             return false;
         }
 
-        // set return value as true and clear errors
-        // its not good practice
-        // but if we set RuleValidationResult.isValid default true
-        // we was wrong return on not validate value
+        // drop default result to true, and clean errors
         $this->validationResult->setIsValid();
 
         // min max length

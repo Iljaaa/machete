@@ -5,6 +5,7 @@ namespace Iljaaa\Machete\rules\validationRules;
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\BasicRule;
+use Iljaaa\Machete\rules\RulesCollection;
 use Iljaaa\Machete\Validation;
 
 /**
@@ -65,9 +66,14 @@ class RegexRule extends BasicRule
      */
     public static function selfCreateFromValidatorConfig (array $config): RegexRule
     {
+        $attributes = RulesCollection::makeAttributesArrayFromRuleConfig($config);
+        assert($attributes, 'Attribute name is empty, $config[0]');
+
         $regex = $config['regex'] ?? $config[2] ?? null;
+        assert($regex != null, 'Regex not found in config, $config[0]');
+
         if (empty($regex)) {
-            throw new RuleConfigurationException('Regex pattern not set', null, $config);
+            throw new RuleConfigurationException('Regex pattern not set', $config);
         }
 
         $r = new RegexRule($regex);
@@ -88,7 +94,7 @@ class RegexRule extends BasicRule
         // preg_match($pattern, $subject, $matches);
         // $result = !empty($matches);
 
-        // drop result to bool
+        // drop default result to true, and clean errors
         $this->validationResult->setIsValid();
 
         if ($this->isMatch($this->regex, $value) == false) {

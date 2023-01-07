@@ -3,7 +3,6 @@
 namespace Iljaaa\Machete\rules\validationRules;
 
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
-use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\BasicRule;
 use Iljaaa\Machete\rules\RulesCollection;
 
@@ -134,7 +133,7 @@ abstract class NumericValidationBasicRule extends BasicRule
      * @param NumericValidationBasicRule $rule
      * @param array $config
      * @return void
-     * @throws ValidationException
+     * @throws RuleConfigurationException
      */
     public static function updateNumericRule  (NumericValidationBasicRule $rule, array $config): void
     {
@@ -142,7 +141,7 @@ abstract class NumericValidationBasicRule extends BasicRule
         assert($attributes, 'Attribute name is empty, $config[0]');
 
         if (empty($attributes)) {
-            throw new RuleConfigurationException('Attribute name is empty', null, $config);
+            throw new RuleConfigurationException('Attribute name is empty', $config);
         }
 
         if (isset($config['min'])) {
@@ -175,23 +174,21 @@ abstract class NumericValidationBasicRule extends BasicRule
     }
 
     /**
-     * Validate min max malues
+     * Validate min max values
      * @param $value
      * @return void
      */
     protected function validateMinMax($value)
     {
-        // min max length
-        if ($this->min != null || $this->max != null)
-        {
-            if ($this->min !== null && $value < $this->min) {
-                $this->validationResult->addError($this->getToSmall());
-            }
-
-            if ($this->max != null && $value > $this->max) {
-                $this->validationResult->addError($this->getToBig());
-            }
+        // validate min|max
+        $min = $this->getMin();
+        if ($min !== null && $min > $value) {
+            $this->validationResult->addError($this->getToSmall());
         }
 
+        $max = $this->getMax();
+        if ($max !== null && $max < $value) {
+            $this->validationResult->addError($this->getToBig());
+        }
     }
 }

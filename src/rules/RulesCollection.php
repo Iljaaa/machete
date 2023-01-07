@@ -17,7 +17,7 @@ use Iljaaa\Machete\rules\validationRules\StringRule;
  * Rules collection
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.3.4
+ * @version 1.3.5
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -73,7 +73,7 @@ class RulesCollection implements \Iterator
      * Make fields array from difrend types
      * @param array $ruleConfig
      * @return array
-     * @throws ValidationException
+     * @throws RuleConfigurationException
      */
     public static function makeAttributesArrayFromRuleConfig (array $ruleConfig): array
     {
@@ -86,7 +86,7 @@ class RulesCollection implements \Iterator
         if (is_string($field)) return [$field];
         if (is_array($field)) return $field;
 
-        throw new ValidationException("Unknown field description");
+        throw new RuleConfigurationException("Unknown field description");
     }
 
     /**

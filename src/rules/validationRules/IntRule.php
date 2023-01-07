@@ -49,20 +49,11 @@ class IntRule extends NumericValidationBasicRule
             return false;
         }
 
-        // min max length
-        // drop to default true value
+        // drop default result to true, and clean errors
         $this->validationResult->setIsValid();
 
-        // validate min|max
-        $min = $this->getMin();
-        if ($min !== null && $min > $value) {
-            $this->validationResult->addError($this->getToSmall());
-        }
-
-        $max = $this->getMax();
-        if ($max !== null && $max < $value) {
-            $this->validationResult->addError($this->getToBig());
-        }
+        // min max
+        $this->validateMinMax($value);
 
         return $this->validationResult->isValid();
     }

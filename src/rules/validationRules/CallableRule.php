@@ -29,8 +29,8 @@ class CallableRule extends BasicRule
 
     /**
      * Form attribute name
-     * when we call a validate method
-     * it call a callable object with parameters one of them its a attribute name
+     * When form validate method called
+     * it call a callable object with parameters one of them it's an attribute name
      * @var string
      */
     private string $attributeName = '';
@@ -131,21 +131,17 @@ class CallableRule extends BasicRule
      */
     public static function selfCreateFromValidatorConfig (array $config): CallableRule
     {
-        assert(!empty($config[0]), 'Attribute is empty, $config[0]');
-        assert(!empty($config[1]), 'Callable object is empty, $config[1]');
-
-        /*if (empty($config[0])) {
-            throw new RuleConfigurationException('Attribute parameter empty', null, $config);
-        }*/
+        assert(isset($config[0]), 'Attribute is empty, $config[0]');
+        assert(isset($config[1]), 'Callable object is empty, $config[1]');
 
         if (empty($config[1])) {
-            throw new RuleConfigurationException('Callable parameter empty', null, $config);
+            throw new RuleConfigurationException('Callable parameter empty', $config);
         }
 
         // check callable object
         $callableObject = $config[1];
         if (!is_callable($callableObject)){
-            throw new RuleConfigurationException('Object is not callable', null, $config);
+            throw new RuleConfigurationException('Object is not callable', $config);
         }
 
         $r = new CallableRule($callableObject);

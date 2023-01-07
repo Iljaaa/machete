@@ -2,14 +2,8 @@
 
 namespace Iljaaa\Machete\rules\validationRules;
 
-use Iljaaa\Machete\exceptions\RuleConfigurationException;
-use Iljaaa\Machete\exceptions\ValidationException;
-use Iljaaa\Machete\rules\BasicRule;
-use Iljaaa\Machete\rules\RulesCollection;
-use Iljaaa\Machete\Validation;
-
 /**
- * Date rule its for check string
+ * Date rule
  *
  * @author ilja <the.ilja@gmail.com>
  * @version 1.0.0

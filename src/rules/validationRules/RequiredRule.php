@@ -2,7 +2,9 @@
 
 namespace Iljaaa\Machete\rules\validationRules;
 
+use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\rules\BasicRule;
+use Iljaaa\Machete\rules\RulesCollection;
 use Iljaaa\Machete\Validation;
 
 /**
@@ -20,20 +22,6 @@ class RequiredRule extends BasicRule
      * @var string
      */
     private string $message = "It's required";
-
-    /**
-     * @param array $config
-     * @return RequiredRule
-     */
-    public static function selfCreateFromValidatorConfig(array $config): RequiredRule
-    {
-        $r = new RequiredRule();
-
-        if (!empty($config['message'])) $r->setMessage($config['message']);
-
-        return $r;
-    }
-
     /**
      * @param string $message
      * @return RequiredRule
@@ -49,9 +37,7 @@ class RequiredRule extends BasicRule
      */
     public function validate($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
-        // fixme: not good practice
-        // but if we set RuleValidationResult.isValid default true
-        // we was wrong return on not valided value
+        // drop default result to true, and clean errors
         $this->validationResult->setIsValid();
 
         // min max length
@@ -62,4 +48,22 @@ class RequiredRule extends BasicRule
 
         return $this->validationResult->isValid();
     }
+
+    /**
+     * @param array $config
+     * @return RequiredRule
+     * @throws RuleConfigurationException
+     */
+    public static function selfCreateFromValidatorConfig(array $config): RequiredRule
+    {
+        $attributes = RulesCollection::makeAttributesArrayFromRuleConfig($config);
+        assert($attributes, 'Attribute name is empty, $config[0]');
+
+        $r = new RequiredRule();
+
+        if (!empty($config['message'])) $r->setMessage($config['message']);
+
+        return $r;
+    }
+
 }
