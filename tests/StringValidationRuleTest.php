@@ -184,26 +184,47 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
         assert_options(ASSERT_ACTIVE, 0);
 
         // type
-        $rule = StringRule::selfCreateFromValidatorConfig(['testField', 'string', 'wrongType' => 'wrong type og :attribute']);
+        $rule = StringRule::selfCreateFromValidatorConfig(['testField', 'string']);
+        $this->assertEquals("testField has wrong type", $rule->getWrongType());
         $result = $rule->validate(null);
         $this->assertFalse($result);
+        $this->assertEquals("testField has wrong type", $rule->getFirstError());
+        $this->assertEquals(['testField has wrong type'], $rule->getErrors(), 'Wrong errors array');
 
+        $rule = StringRule::selfCreateFromValidatorConfig(['testField', 'string', 'wrongType' => 'wrong type og :attribute']);
+        $this->assertEquals("wrong type og testField", $rule->getWrongType());
+        $result = $rule->validate(null);
+        $this->assertFalse($result);
         $this->assertEquals("wrong type og testField", $rule->getFirstError());
         $this->assertEquals(['wrong type og testField'], $rule->getErrors(), 'Wrong errors array');
 
         // short
-        $rule = StringRule::selfCreateFromValidatorConfig(['testField', 'string', "min" => 5, 'toShort' => ':attribute min :min chars length']);
+        $rule = StringRule::selfCreateFromValidatorConfig(['testField', 'string', "min" => 5]);
+        $this->assertEquals("testField to short, min length 5", $rule->getToShort());
         $result = $rule->validate('123');
         $this->assertFalse($result);
+        $this->assertEquals("testField to short, min length 5", $rule->getFirstError());
+        $this->assertEquals(['testField to short, min length 5'], $rule->getErrors());
 
+        $rule = StringRule::selfCreateFromValidatorConfig(['testField', 'string', "min" => 5, 'toShort' => ':attribute min :min chars length']);
+        $this->assertEquals("testField min 5 chars length", $rule->getToShort());
+        $result = $rule->validate('123');
+        $this->assertFalse($result);
         $this->assertEquals("testField min 5 chars length", $rule->getFirstError());
         $this->assertEquals(['testField min 5 chars length'], $rule->getErrors());
 
         // long
-        $rule = StringRule::selfCreateFromValidatorConfig(['testField', 'string', 'max' => 2, 'toLong' => ':attribute max :max chars length']);
+        $rule = StringRule::selfCreateFromValidatorConfig(['testField', 'string', 'max' => 2]);
+        $this->assertEquals("testField to long, max length 2", $rule->getToLong());
         $result = $rule->validate("123");
         $this->assertFalse($result);
+        $this->assertEquals("testField to long, max length 2", $rule->getFirstError());
+        $this->assertEquals(['testField to long, max length 2'], $rule->getErrors());
 
+        $rule = StringRule::selfCreateFromValidatorConfig(['testField', 'string', 'max' => 2, 'toLong' => ':attribute max :max chars length']);
+        $this->assertEquals("testField max 2 chars length", $rule->getToLong());
+        $result = $rule->validate("123");
+        $this->assertFalse($result);
         $this->assertEquals("testField max 2 chars length", $rule->getFirstError());
         $this->assertEquals(['testField max 2 chars length'], $rule->getErrors());
 

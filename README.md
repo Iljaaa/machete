@@ -275,6 +275,11 @@ Form one rule row attributes:
 |---------|--------|:--------------|:-----------------------|
 | message | string | error message | :attribute is required |
 
+where:
+
+<b>message</a>
+- :attribute - from attribute name
+
 <b>manual use</b>
 
 Tell me any reason use it stand alone? Use empty() function 
@@ -299,11 +304,11 @@ additional params:
 
 Error messages for override:
 
-| Param     | type   | Are                                      | Default            |
-|-----------|--------|:-----------------------------------------|:-------------------|
-| wrongType | string | error message if you try check no string | It's not a string  |
-| toShort   | string |                                          | To short           |
-| toLong    | string |                                          | To long            |
+| Param     | type   | Are                                      | Default                              |
+|-----------|--------|:-----------------------------------------|:-------------------------------------|
+| wrongType | string | error message if you try check no string | :attribute has wrong type            |
+| toShort   | string |                                          | :attribute to short, min length :min |
+| toLong    | string |                                          | :attribute to long, max length :max  |
 
 When you override default error messages you can use named variables to be replaced by values in error message
 
@@ -312,11 +317,11 @@ When you override default error messages you can use named variables to be repla
 
 <b>toShort</a> 
 - :attribute - from attribute name
-- :short - min len for check: example: ":attribute, min :short chars length"
+- :min - min len for check: example: ":attribute, min :short chars length"
 
 <b>toLong</a> 
 - :attribute - from attribute name
-- :long - max len for check: example: ":attribute, max :long chars length"
+- :max - max len for check: example: ":attribute, max :long chars length"
 
 <b>manual use</b>
 
@@ -664,7 +669,6 @@ Methods isValid() and isAttributeValid() always return false before you call val
 
 To do:
 - update fields errors
-  - string
   - int & float
   - in
   - callable

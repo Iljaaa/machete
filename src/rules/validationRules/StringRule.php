@@ -34,6 +34,17 @@ class StringRule extends BasicRule
     private string $toLong = 'To long';
 
     /**
+     * Default error messages
+     * @var array|int
+     */
+    private static array $defaultErrorDescriptions = [
+        'wrongType' => ':attribute has wrong type',
+        'toShort' => ':attribute to short, min length :min',
+        'toLong' => ':attribute to long, max length :max',
+    ];
+
+
+    /**
      * @return int|null
      */
     public function getMin (): ?int
@@ -147,26 +158,22 @@ class StringRule extends BasicRule
             $r->setMax((int) $config['max']);
         }
 
-        if (!empty($config['wrongType'])) {
-            $r->setWrongType(static::makeFormErrorString($config['wrongType'], [
-                ':attribute' => implode(', ', $attributes)
-            ]));
-        }
+        $m = $config['wrongType'] ?? static::$defaultErrorDescriptions['wrongType'];
+        $r->setWrongType(static::makeFormErrorString($m, [
+            ':attribute' => implode(', ', $attributes),
+        ]));
 
-        if (!empty($config['toShort'])) {
-            $r->setToShort(static::makeFormErrorString($config['toShort'], [
-                ':attribute' => implode(', ', $attributes),
-                ':min'       => $r->getMin(),
-            ]));
-            // $this->toShort = $config['toShort'];
-        }
+        $m = $config['toShort'] ?? static::$defaultErrorDescriptions['toShort'];
+        $r->setToShort(static::makeFormErrorString($m, [
+            ':attribute' => implode(', ', $attributes),
+            ':min'       => $r->getMin(),
+        ]));
 
-        if (!empty($config['toLong'])) {
-            $r->setToLong(static::makeFormErrorString($config['toLong'], [
-                ':attribute' => implode(', ', $attributes),
-                ':max'       => $r->getMax(),
-            ]));
-        }
+        $m = $config['toLong'] ?? static::$defaultErrorDescriptions['toLong'];
+        $r->setToLong(static::makeFormErrorString($m, [
+            ':attribute' => implode(', ', $attributes),
+            ':max'       => $r->getMax(),
+        ]));
 
         return $r;
     }
