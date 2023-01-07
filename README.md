@@ -354,22 +354,22 @@ Additional params:
 
 Error messages:
 
-| Param     | type      | Are                       | Default for int  | Default for float |
-|-----------|-----------|:--------------------------|:-----------------|-------------------|
-| wrongType | string    | Wrong type error message  | It is not an int | It is not a float |
-| toSmall   | string    | value < min error message | To small         |                   |
-| toBig     | string    | value > max error message | To big           |                   |
+| Param     | type   | Are                       | Default for int                      |
+|-----------|--------|:--------------------------|:-------------------------------------|
+| wrongType | string | Wrong type error message  | :attribute has wrong type            |
+| toSmall   | string | value < min error message | :attribute to small, min length :min |
+| toBig     | string | value > max error message | :attribute to big, max length :max   |
 
 <b>wrongType</a>
 - :attribute - from attribute name
 
 <b>toSmall</a>
 - :attribute - from attribute name
-- :short - min len for check: example: ":attribute, min :short chars length"
+- :min - min len for check: example: ":attribute, min :short chars length"
 
 <b>toBig</a>
 - :attribute - from attribute name
-- :long - max len for check: example: ":attribute, max :long chars length"
+- :max - max len for check: example: ":attribute, max :long chars length"
 
 <b>manual use</b>
 
@@ -669,7 +669,6 @@ Methods isValid() and isAttributeValid() always return false before you call val
 
 To do:
 - update fields errors
-  - int & float
   - in
   - callable
 - manual use

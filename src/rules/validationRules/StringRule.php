@@ -29,9 +29,9 @@ class StringRule extends BasicRule
      * Basic error messages
      * @var string
      */
-    private string $wrongType = "It's not a string";
-    private string $toShort = 'To short';
-    private string $toLong = 'To long';
+    private string $wrongType = "Value is not a string";
+    private string $toShort = 'Value to short';
+    private string $toLong = 'Value to long';
 
     /**
      * Default error messages
@@ -42,7 +42,6 @@ class StringRule extends BasicRule
         'toShort' => ':attribute to short, min length :min',
         'toLong' => ':attribute to long, max length :max',
     ];
-
 
     /**
      * @return int|null

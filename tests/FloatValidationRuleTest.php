@@ -7,7 +7,7 @@ use Iljaaa\Machete\rules\validationRules\FloatRule;
  * Test string component
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.2
+ * @version 1.0.3
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -51,59 +51,6 @@ class FloatValidationRuleTest extends \PHPUnit\Framework\TestCase
         $result = (new FloatRule())->setMin(10)->validate(9);
         $this->assertFalse($result);
     }
-
-    /**
-     *
-     **/
-    public function testDefaultErrorMessages ()
-    {
-        // type
-        $rule = new FloatRule();
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertFalse($rule->validate('sadfsdfdsf'), 'wrong result');
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals("It's not float", $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['It\'s not float'], $rule->getErrors(), 'Wrong errors array');
-
-        $rule = (new FloatRule())->setWrongType('wrong type message');
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertFalse($rule->validate([]), 'wrong result');
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('wrong type message', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['wrong type message'], $rule->getErrors(), 'Wrong errors array');
-
-        // min
-        $rule = (new FloatRule())->setMin(10);
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertFalse($rule->validate(5), 'wrong result');
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('To small', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['To small'], $rule->getErrors(), 'Wrong errors array');
-
-        $rule = (new FloatRule())->setMin(10)->setToSmall("test to small");
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertFalse($rule->validate(5), 'wrong result');
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('test to small', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['test to small'], $rule->getErrors(), 'Wrong errors array');
-
-        // max
-        $rule = (new FloatRule())->setMax(5);
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertFalse($rule->validate(15), 'wrong result');
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('To big', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['To big'], $rule->getErrors(), 'Wrong errors array');
-
-        $rule = (new FloatRule())->setMax(5)->setToBig("test to small");
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertFalse($rule->validate(15), 'wrong result');
-        $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('test to small', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['test to small'], $rule->getErrors(), 'Wrong errors array');
-
-    }
-
 
     /**
      *

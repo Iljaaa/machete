@@ -62,8 +62,8 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate([]), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals("It's not a string", $rule->getFirstError());
-        $this->assertEquals(['It\'s not a string'], $rule->getErrors(), 'Wrong errors array');
+        $this->assertEquals("Value is not a string", $rule->getFirstError());
+        $this->assertEquals(['Value is not a string'], $rule->getErrors(), 'Wrong errors array');
 
         // override
         $rule = (new StringRule())->setWrongType( 'wrong type error message');
@@ -78,8 +78,8 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('it is very long string'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('To long', $rule->getFirstError());
-        $this->assertEquals(['To long'], $rule->getErrors(), 'Wrong errors array');
+        $this->assertEquals('Value to long', $rule->getFirstError());
+        $this->assertEquals(['Value to long'], $rule->getErrors(), 'Wrong errors array');
 
         // override message
         $rule = (new StringRule())->setMax(10)->setToLong('Test to big message');
@@ -96,8 +96,8 @@ class StringValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate('test'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('To short', $rule->getFirstError());
-        $this->assertEquals(['To short'], $rule->getErrors(), 'Wrong errors array');
+        $this->assertEquals('Value to short', $rule->getFirstError());
+        $this->assertEquals(['Value to short'], $rule->getErrors(), 'Wrong errors array');
 
         // override
         $rule = (new StringRule())->setMin(10)->setToShort('Test short message');

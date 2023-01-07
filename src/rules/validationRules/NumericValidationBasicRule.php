@@ -23,21 +23,22 @@ abstract class NumericValidationBasicRule extends BasicRule
     private ?float $min = null, $max = null;
 
     /**
-     * Wrong type error message
+     * Error messages
      * @var string
      */
-    private string $wrongType = '';
+    private string $wrongType = 'Value has wrong type';
+    private string $toSmall = 'Value to small';
+    private string $toBig = 'Value to big';
 
     /**
-     * Basic error messages
-     * @var string
+     * Default error messages
+     * @var array|int
      */
-    private string $toSmall = 'To small';
-
-    /**
-     * @var string
-     */
-    private string $toBig = 'To big';
+    private static array $defaultErrorDescriptions = [
+        'wrongType' => ':attribute has wrong type',
+        'toSmall' => ':attribute to small, min length :min',
+        'toBig' => ':attribute to big, max length :max',
+    ];
 
     /**
      * @param float $min
@@ -151,26 +152,23 @@ abstract class NumericValidationBasicRule extends BasicRule
             $rule->setMax((float) $config['max']);
         }
 
-        if (!empty($config['wrongType'])) {
-            $rule->setWrongType(static::makeFormErrorString($config['wrongType'], [
-                ':attribute' => implode(', ', $attributes)
-            ]));
-        }
+        $m = $config['wrongType'] ?? static::$defaultErrorDescriptions['wrongType'];
+        $rule->setWrongType(static::makeFormErrorString($m, [
+            ':attribute' => implode(', ', $attributes),
+        ]));
 
-        if (!empty($config['toSmall'])) {
-            $rule->setToSmall(static::makeFormErrorString($config['toSmall'], [
-                ':attribute' => implode(', ', $attributes),
-                ':min'       => $rule->getMin(),
-            ]));
-            // $this->toShort = $config['toShort'];
-        }
 
-        if (!empty($config['toBig'])) {
-            $rule->setToBig(static::makeFormErrorString($config['toBig'], [
-                ':attribute' => implode(', ', $attributes),
-                ':max'       => $rule->getMax(),
-            ]));
-        }
+        $m = $config['toSmall'] ?? static::$defaultErrorDescriptions['toSmall'];
+        $rule->setToSmall(static::makeFormErrorString($m, [
+            ':attribute' => implode(', ', $attributes),
+            ':min'       => $rule->getMin(),
+        ]));
+
+        $m = $config['toBig'] ?? static::$defaultErrorDescriptions['toBig'];
+        $rule->setToBig(static::makeFormErrorString($m, [
+            ':attribute' => implode(', ', $attributes),
+            ':max'       => $rule->getMax(),
+        ]));
     }
 
     /**

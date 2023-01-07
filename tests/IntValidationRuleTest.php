@@ -80,8 +80,8 @@ class IntValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate(5), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('To small', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['To small'], $rule->getErrors(), 'Wrong errors array');
+        $this->assertEquals('Value to small', $rule->getFirstError(), 'Wrong first error');
+        $this->assertEquals(['Value to small'], $rule->getErrors(), 'Wrong errors array');
 
         $rule = (new IntRule())->setMin(10)->setToSmall("test to small");
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -95,8 +95,8 @@ class IntValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertFalse($rule->validate(15), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertEquals('To big', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['To big'], $rule->getErrors(), 'Wrong errors array');
+        $this->assertEquals('Value to big', $rule->getFirstError(), 'Wrong first error');
+        $this->assertEquals(['Value to big'], $rule->getErrors(), 'Wrong errors array');
 
         $rule = (new IntRule())->setMax(5)->setToBig("test to small");
         $this->assertFalse($rule->isValid(), 'wrong result');
@@ -204,6 +204,8 @@ class IntValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['testField max 2 chars length'], $rule->getErrors());
 
     }
+
+
 
 
 
