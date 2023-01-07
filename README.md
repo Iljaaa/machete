@@ -271,9 +271,9 @@ Required rule use empty() function for check value.
 
 Form one rule row attributes:
 
-| Param   | type   | Are           | Default       |
-|---------|--------|:--------------|:--------------|
-| message | string | error message | It's required |
+| Param   | type   | Are           | Default                |
+|---------|--------|:--------------|:-----------------------|
+| message | string | error message | :attribute is required |
 
 <b>manual use</b>
 
@@ -663,11 +663,7 @@ Methods isValid() and isAttributeValid() always return false before you call val
 
 
 To do:
-- assert attribute for create form function
-  - in 
-  - in check traversable
 - update fields errors
-  - required
   - string
   - int & float
   - in

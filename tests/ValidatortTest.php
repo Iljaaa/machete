@@ -1,6 +1,7 @@
 <?php
 
 use Iljaaa\Machete\exceptions\ValidationException;
+use Iljaaa\Machete\rules\validationRules\CallableRule;
 use Iljaaa\Machete\Validation;
 
 require(__DIR__.'/../vendor/autoload.php');
@@ -9,13 +10,14 @@ require(__DIR__.'/../vendor/autoload.php');
  *
  * @author ilja <the.ilja@gmail.com>
  * @package Iljaaa\Machete
- * @version 1.0.3
+ * @version 1.0.4
  * @see https://github.com/Iljaaa/machete
  */
 class ValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      *
+     * @throws ValidationException
      */
      public function testAllRules ()
      {
@@ -28,14 +30,14 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
              public function rules (): array
              {
                  return [
-                     [['string'], 'required', 'message' => 'String is reqqqqured'],
+                     [['string'], 'required', 'message' => 'String is required'],
                      [['number'], 'required'],
                      [['myNameWho'], 'string'],
                      [['myNameWho'], 'required', 'message' => 'Its required field'],
                      [['myNameWho'], 'regex', '/^S/'],
                      [['number'], 'int', "min" => 7],
                      [['number'], 'float', "min" => 7],
-                     [['notset'], 'required'],
+                     [['notSet'], 'required'],
                      [['valid'], 'required'],
                      ['phones', 'in', ['345', '123', '333']],
                      [['number', 'valid'], fn () => true]
@@ -46,7 +48,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $validator->load ([
             'string' => '',
             'number' => 10,
-            'valid' => 'aaaaa',
+            'valid' => 'some value',
         ]);
 
 
@@ -59,17 +61,18 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
          $this->assertFalse($validator->isAttributeValid('string'));
          $this->assertTrue($validator->isAttributeValid('number'));
-         $this->assertFalse($validator->isAttributeValid('notset'));
+         $this->assertFalse($validator->isAttributeValid('notSet'));
          $this->assertTrue($validator->isAttributeValid('valid'));
 
-         $this->assertEquals('String is reqqqqured', $validator->getFirstErrorForAttribute('string'));
+         $this->assertEquals('String is required', $validator->getFirstErrorForAttribute('string'));
          $this->assertEquals('', $validator->getFirstErrorForAttribute('number'));
-         $this->assertEquals('It\'s required', $validator->getFirstErrorForAttribute('notset'));
+         $this->assertEquals('notSet is required', $validator->getFirstErrorForAttribute('notSet'));
          $this->assertEmpty($validator->getFirstErrorForAttribute('valid'));
      }
 
     /**
      *
+     * @throws ValidationException
      */
      public function testOther ()
      {
@@ -80,9 +83,9 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
              public function rules (): array
              {
                  return [
-                     [['string'], 'required', 'message' => 'String is reqqqqured'],
+                     [['string'], 'required', 'message' => 'String is required'],
                      [['number'], 'required'],
-                     [['notset'], 'required'],
+                     [['notSet'], 'required'],
                      [['valid'], 'required'],
                      ['phones', 'in', ['345', '123', '333']]
                  ];
@@ -92,7 +95,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $validator->load ([
             'string' => '',
             'number' => 10,
-            'valid' => 'aaaaa'
+            'valid' => 'some value'
         ]);
 
 
@@ -103,14 +106,14 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
          $this->assertFalse($validator->isValid());
          $this->assertFalse($validator->isValid(), 'is validate flag wrong 2');
 
-         $this->assertFalse($validator->isAttributeValid('string'), );
+         $this->assertFalse($validator->isAttributeValid('string'));
          $this->assertTrue($validator->isAttributeValid('number'));
-         $this->assertFalse($validator->isAttributeValid('notset'));
+         $this->assertFalse($validator->isAttributeValid('notSet'));
          $this->assertTrue($validator->isAttributeValid('valid'));
 
-         $this->assertEquals('String is reqqqqured', $validator->getFirstErrorForAttribute('string'));
+         $this->assertEquals('String is required', $validator->getFirstErrorForAttribute('string'));
          $this->assertEquals('', $validator->getFirstErrorForAttribute('number'));
-         $this->assertEquals('It\'s required', $validator->getFirstErrorForAttribute('notset'));
+         $this->assertEquals('notSet is required', $validator->getFirstErrorForAttribute('notSet'));
          $this->assertEmpty($validator->getFirstErrorForAttribute('valid'));
      }
 
@@ -164,7 +167,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
              }
          };
 
-         $validator->load(['name' => 'asdfasdfasf']);
+         $validator->load(['name' => 'superName']);
 
          $this->assertFalse($validator->isVasValidated());
          $this->assertFalse($validator->isValid(), 'start is isValid flag is wrong');
@@ -185,7 +188,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $validator = new class extends Validation
         {
-            public string $name = 'sdkjasasdasd';
+            public string $name = 'superName';
 
             public function rules(): array
             {
@@ -198,7 +201,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                 ];
             }
 
-            public function nonStaticValidateMethod($value, string $field, \Iljaaa\Machete\rules\BasicRule $r): bool {
+            public function nonStaticValidateMethod($value, string $field, CallableRule $rule): bool {
                 return true;
             }
         };
@@ -235,7 +238,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                 ];
             }
 
-            public function nonStaticValidateMethod($value, string $field, \Iljaaa\Machete\rules\BasicRule $r): bool {
+            public function nonStaticValidateMethod($value, string $field, CallableRule $r): bool {
                 $r->addError('error from nonStaticValidateMethod');
                 return false;
             }
@@ -250,7 +253,6 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
         $errors = $validator->getErrors();
         $this->assertIsArray($errors, 'errors must be array');
-        // 1 its correct, we have only noe field for validate
         $this->assertCount(3, $errors, 'wrong errors count');
 
         $firstError = $validator->getFirstError();
@@ -274,6 +276,9 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($shortStringFirstError, 'error is empty');
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function testValidatePartsOfFields ()
     {
         $validator = new class extends Validation
@@ -315,7 +320,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($validator->getErrors());
 
         $this->expectException(ValidationException::class);
-        $validator->validate(['valuesdlfjblsdkbf']);
+        $validator->validate(['string']);
     }
 
     /**
@@ -328,9 +333,12 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * static test function but it add error
+     * @param $value
+     * @param string $attribute
+     * @param CallableRule $r
      * @return bool
      */
-    public static function functionForTestStaticCallAddError($value, string $attribute, \Iljaaa\Machete\rules\BasicRule $r): bool {
+    public static function functionForTestStaticCallAddError($value, string $attribute, CallableRule $r): bool {
         $r->addError('error form functionForTestStaticCallAddError');
         return false;
     }

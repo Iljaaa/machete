@@ -12,7 +12,7 @@ use Iljaaa\Machete\Validation;
  * in base used
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.2
+ * @version 1.1.3
  * @package Iljaaa\Machete
  */
 class RequiredRule extends BasicRule
@@ -21,7 +21,16 @@ class RequiredRule extends BasicRule
      * Basic error messages
      * @var string
      */
-    private string $message = "It's required";
+    private string $message = "Value required";
+
+    /**
+     * Default error messages
+     * @var array|int
+     */
+    private static array $defaultErrorDescriptions = [
+        'message' => ':attribute is required',
+    ];
+
     /**
      * @param string $message
      * @return RequiredRule
@@ -30,6 +39,14 @@ class RequiredRule extends BasicRule
     {
         $this->message = $message;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage (): string
+    {
+        return $this->message;
     }
 
     /**
@@ -59,9 +76,14 @@ class RequiredRule extends BasicRule
         $attributes = RulesCollection::makeAttributesArrayFromRuleConfig($config);
         assert($attributes, 'Attribute name is empty, $config[0]');
 
+        if (empty($attributes)) {
+            throw new RuleConfigurationException('Attribute name is empty', $config);
+        }
+
         $r = new RequiredRule();
 
-        if (!empty($config['message'])) $r->setMessage($config['message']);
+        $m = $config['message'] ?? static::$defaultErrorDescriptions['message'];
+        $r->setMessage(static::makeFormErrorString($m, [':attribute' => implode(', ', $attributes)]));
 
         return $r;
     }

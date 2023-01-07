@@ -373,7 +373,6 @@ class StringDateValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['testField max 2 chars length'], $rule->getErrors());*/
     }
 
-
     /**
      *
      *
