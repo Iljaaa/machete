@@ -42,7 +42,7 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Set collable object as array
+     * Set callable object as array
      * @return void
      * @throws ValidationException
      */
@@ -102,15 +102,15 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
 
         // not twos
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig(['asdasd', [static::class, 'successResulCallableStaticFunction']]);
-        CallableRule::selfCreateFromValidatorConfig([['asdasd'], [static::class, 'successResulCallableStaticFunction']]);
+        CallableRule::selfCreateFromValidatorConfig(['test', [static::class, 'successResulCallableStaticFunction']]);
+        CallableRule::selfCreateFromValidatorConfig([['test'], [static::class, 'successResulCallableStaticFunction']]);
 
         // throws
         $this->expectException(RuleConfigurationException::class);
         CallableRule::selfCreateFromValidatorConfig([]);
 
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig(['asdasd', 'dadas']);
+        CallableRule::selfCreateFromValidatorConfig(['test', 'second']);
     }
 
     /**
@@ -124,17 +124,17 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
 
         // not twos
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig(['asdasd', [static::class, 'successResulCallableStaticFunction']]);
+        CallableRule::selfCreateFromValidatorConfig(['test', [static::class, 'successResulCallableStaticFunction']]);
 
         // throws
         $this->expectException(RuleConfigurationException::class);
         CallableRule::selfCreateFromValidatorConfig([]);
 
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig(['aaaa']);
+        CallableRule::selfCreateFromValidatorConfig(['second']);
 
         $this->expectException(RuleConfigurationException::class);
-        CallableRule::selfCreateFromValidatorConfig(['asdasd', 'dadas']);
+        CallableRule::selfCreateFromValidatorConfig(['test', 'second']);
     }
 
     /**
@@ -155,16 +155,18 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
 
     /**
      *
-     **/
+     *
+     * @throws ValidationException
+     */
     public function testErrorMessages ()
     {
         // default message
         $rule = (new CallableRule())->setCallable(fn() => true);
         $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertTrue($rule->validate('asdasdaskjdbasjhdvkasjdv'), 'wrong result');
+        $this->assertTrue($rule->validate('test'), 'wrong result');
         $this->assertTrue($rule->isValid(), 'wrong result');
         $this->assertEquals('', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals([], $rule->getErrors(), 'Wrong errors array');
+        $this->assertEquals([], $rule->getErrors());
 
         // override message
         // $rule = (new CallableRule(fn() => true));
@@ -173,23 +175,25 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
             return false;
         });
         $this->assertFalse($rule->isValid(), 'wrong result');
-        $this->assertFalse($rule->validate('asdasdaskjdbasjhdvkasjdv'), 'wrong result');
+        $this->assertFalse($rule->validate('test'), 'wrong result');
         $this->assertFalse($rule->isValid(), 'wrong result');
         $this->assertEquals('test error', $rule->getFirstError(), 'Wrong first error');
-        $this->assertEquals(['test error'], $rule->getErrors(), 'Wrong errors array');
+        $this->assertEquals(['test error'], $rule->getErrors());
 
         $rule = new CallableRule();
-        $this->assertEquals('Current object is not callable', $rule->getWrongType());
+        $this->assertEquals('Object is not callable', $rule->getWrongType());
 
-        $rule = CallableRule::selfCreateFromValidatorConfig(['name', fn() => false, 'wrongType' => 'test message']);
+        $rule = CallableRule::selfCreateFromValidatorConfig([['name', "value"], fn() => false, 'wrongType' => 'test message']);
         $this->assertEquals('test message', $rule->getWrongType());
-        $this->assertEquals('name', $rule->getAttributeName());
+        $this->assertEquals('name, value', $rule->getAttributeName());
         $this->assertFalse($rule->validate(null));
 
-        $rule = CallableRule::selfCreateFromValidatorConfig([['name', 'value'], fn() => false, 'wrongType' => 'test message']);
-        $this->assertEquals('Array', $rule->getAttributeName());
+        $rule = CallableRule::selfCreateFromValidatorConfig([['name', 'value'], function ($value, string $attribute, CallableRule $r) {
+            $r->addError("test error"); return false;} , 'wrongType' => 'test message']);
+        $this->assertEquals('name, value', $rule->getAttributeName());
         $this->assertEquals('test message', $rule->getWrongType());
         $this->assertFalse($rule->validate(null));
+        $this->assertEquals('test error', $rule->getFirstError());
     }
 
     /**

@@ -27,7 +27,15 @@ class RegexRule extends BasicRule
      * Error messages
      * @var string
      */
-    private string $message = "Not match";
+    private string $message = "Value is not valid";
+
+    /**
+     * Default error messages
+     * @var array|int
+     */
+    private static array $defaultErrorDescriptions = [
+        'message' => ':attribute is not valid',
+    ];
 
     /**
      * @param string|null $regex
@@ -50,6 +58,14 @@ class RegexRule extends BasicRule
     }
 
     /**
+     * @return string|null
+     */
+    public function getRegex (): ?string
+    {
+        return $this->regex;
+    }
+
+    /**
      * @param string $message
      * @return RegexRule
      */
@@ -57,6 +73,14 @@ class RegexRule extends BasicRule
     {
         $this->message = $message;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage (): string
+    {
+        return $this->message;
     }
 
     /**
@@ -77,7 +101,12 @@ class RegexRule extends BasicRule
         }
 
         $r = new RegexRule($regex);
-        if (!empty($config['message'])) $r->setMessage($config['message']);
+
+        $m = $config['message'] ?? static::$defaultErrorDescriptions['message'];
+        $r->setMessage(static::makeFormErrorString($m, [
+            ':attribute' => implode(', ', $attributes),
+        ]));
+
         return $r;
     }
 

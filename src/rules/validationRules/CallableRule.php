@@ -5,6 +5,7 @@ namespace Iljaaa\Machete\rules\validationRules;
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\BasicRule;
+use Iljaaa\Machete\rules\RulesCollection;
 use Iljaaa\Machete\Validation;
 
 /**
@@ -25,7 +26,15 @@ class CallableRule extends BasicRule
      * Form field name for pass in callback
      * @var string
      */
-    private string $wrongType = "Current object is not callable";
+    private string $wrongType = "Object is not callable";
+
+    /**
+     * Default error messages
+     * @var array|int
+     */
+    private static array $defaultErrorDescriptions = [
+        'wrongType' => ':attribute was checked by not callable object',
+    ];
 
     /**
      * Form attribute name
@@ -131,8 +140,14 @@ class CallableRule extends BasicRule
      */
     public static function selfCreateFromValidatorConfig (array $config): CallableRule
     {
-        assert(isset($config[0]), 'Attribute is empty, $config[0]');
         assert(isset($config[1]), 'Callable object is empty, $config[1]');
+
+        $attributes = RulesCollection::makeAttributesArrayFromRuleConfig($config);
+        assert($attributes, 'Attribute name is empty, $config[0]');
+
+        if (empty($attributes)) {
+            throw new RuleConfigurationException('Attribute name is empty', $config);
+        }
 
         if (empty($config[1])) {
             throw new RuleConfigurationException('Callable parameter empty', $config);
@@ -144,15 +159,15 @@ class CallableRule extends BasicRule
             throw new RuleConfigurationException('Object is not callable', $config);
         }
 
-        $r = new CallableRule($callableObject);
-        $r->setAttributeName((string) $config[0]);
+        $attributeAsString = implode(', ', $attributes);
 
-        if (!empty($config['wrongType'])) {
-            $r->setWrongType($config['wrongType']);
-            /*$r->setWrongType(static::makeFormErrorString($config['wrongType'], [
-                ':attribute' => implode(', ', $attributes)
-            ]));*/
-        }
+        $r = new CallableRule($callableObject);
+        $r->setAttributeName($attributeAsString);
+
+        $m = $config['wrongType'] ?? static::$defaultErrorDescriptions['wrongType'];
+        $r->setWrongType(static::makeFormErrorString($m, [
+            ':attribute' => $attributeAsString,
+        ]));
 
         return $r;
     }

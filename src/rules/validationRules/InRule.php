@@ -18,11 +18,6 @@ use Traversable;
  */
 class InRule extends BasicRule
 {
-    /**
-     * Basic error messages
-     * @var string
-     */
-    private string $message = 'Not in array';
 
     /**
      * Haystack to check
@@ -35,6 +30,20 @@ class InRule extends BasicRule
      * @var bool
      */
     private bool $strict = false;
+
+    /**
+     * Basic error messages
+     * @var string
+     */
+    private string $message = 'Value not in array';
+
+    /**
+     * Default error messages
+     * @var array|int
+     */
+    private static array $defaultErrorDescriptions = [
+        'message' => ':attribute not in array',
+    ];
 
     /**
      * @param array|null $haystack
@@ -57,6 +66,14 @@ class InRule extends BasicRule
     }
 
     /**
+     * @return string
+     */
+    public function getMessage (): string
+    {
+        return $this->message;
+    }
+
+    /**
      * @param bool $strict
      * @return InRule
      */
@@ -67,6 +84,14 @@ class InRule extends BasicRule
     }
 
     /**
+     * @return bool
+     */
+    public function isStrict (): bool
+    {
+        return $this->strict;
+    }
+
+    /**
      * @param array|Traversable $haystack
      * @return InRule
      */
@@ -74,6 +99,14 @@ class InRule extends BasicRule
     {
         $this->haystack = $haystack;
         return $this;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getHaystack (): ?array
+    {
+        return $this->haystack;
     }
 
     /**
@@ -101,7 +134,7 @@ class InRule extends BasicRule
         assert($attributes, 'Attribute name is empty, $config[0]');
 
         $haystack = $config['haystack'] ?? $config[2] ?? null;
-        assert($haystack != null, 'Haystack not found in config, $config[1]');
+        assert($haystack != null, 'Haystack not found in config, $config[2]');
 
         if (empty($haystack)) {
             throw new RuleConfigurationException('Haystack is empty');
@@ -109,8 +142,14 @@ class InRule extends BasicRule
 
         $r = new InRule($haystack);
 
-        if (!empty($config['message'])) $r->setMessage($config['message']);
-        if (!empty($config['strict'])) $r->setStrict((bool) $config['strict']);
+        $m = $config['message'] ?? static::$defaultErrorDescriptions['message'];
+        $r->setMessage(static::makeFormErrorString($m, [
+            ':attribute' => implode(', ', $attributes)
+        ]));
+
+        if (isset($config['strict'])) {
+            $r->setStrict((bool) $config['strict']);
+        }
 
         return $r;
     }

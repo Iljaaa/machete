@@ -427,9 +427,9 @@ additional params:
 
 Error messages:
 
-| Param   | type   | Are                              | Default      |
-|---------|--------|:---------------------------------|:-------------|
-| message | string | error message                    | Not in array |
+| Param   | type   | Default                 |
+|---------|--------|:------------------------|
+| message | string | :attribute not in array |
 
 
 manual use
@@ -471,9 +471,9 @@ Rule don't have additional params.
 
 Error messages:
 
-| Param   | type   | Are                              | Default      |
-|---------|--------|:---------------------------------|:-------------|
-| message | string | error message                    | Not in array |
+| Param   | type   | Default                 |
+|---------|--------|:------------------------|
+| message | string | :attribute is not valid |
 
 <b>manual use<b> 
 
@@ -520,9 +520,9 @@ If is_callable function return false, you get false as validation result and wro
 
 Error messages
 
-| Param     | type   | Default                       | Default |
-|-----------|--------|:------------------------------|:--------|
-| wrongType | string | wrong type of callable object |         |
+| Param     | type   | Default                                       |
+|-----------|--------|:----------------------------------------------|
+| wrongType | string | :attribute was checked by not callable object |
 
 
 On validation your function will be called width params:
@@ -668,9 +668,6 @@ Methods isValid() and isAttributeValid() always return false before you call val
 
 
 To do:
-- update fields errors
-  - in
-  - callable
 - manual use
   - date & datetime
   - in
