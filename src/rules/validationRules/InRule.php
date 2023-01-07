@@ -88,10 +88,10 @@ class InRule extends BasicRule
     }
 
     /**
-     * @param array $haystack
+     * @param array|\Traversable $haystack
      * @return InRule
      */
-    public function setHaystack (array $haystack): InRule
+    public function setHaystack ($haystack): InRule
     {
         $this->haystack = $haystack;
         return $this;

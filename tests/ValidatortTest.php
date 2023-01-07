@@ -38,8 +38,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                      [['notset'], 'required'],
                      [['valid'], 'required'],
                      ['phones', 'in', ['345', '123', '333']],
-
-                     // todo: add callable
+                     [['number', 'valid'], fn () => true]
                  ];
              }
          };

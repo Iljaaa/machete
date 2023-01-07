@@ -39,10 +39,10 @@ class RegexRule extends BasicRule
     }
 
     /**
-     * @param string|null $regex
+     * @param string $regex
      * @return RegexRule
      */
-    public function setRegex (?string $regex): RegexRule
+    public function setRegex (string $regex): RegexRule
     {
         $this->regex = $regex;
         return $this;

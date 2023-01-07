@@ -5,7 +5,6 @@ namespace Iljaaa\Machete\rules\validationRules;
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\BasicRule;
-use Iljaaa\Machete\rules\Rule;
 use Iljaaa\Machete\Validation;
 
 /**
@@ -26,7 +25,7 @@ class CallableRule extends BasicRule
      * Form field name for pass in callback
      * @var string
      */
-    private string $wrongType = "Current object is not callable object";
+    private string $wrongType = "Current object is not callable";
 
     /**
      * Form attribute name
@@ -47,6 +46,24 @@ class CallableRule extends BasicRule
     }
 
     /**
+     * @param callable|null $callableObject
+     * @return CallableRule
+     */
+    public function setCallable (callable $callableObject): CallableRule
+    {
+        $this->callableObject = $callableObject;
+        return $this;
+    }
+
+    /**
+     * @return callable|null
+     */
+    public function getCallableObject (): ?callable
+    {
+        return $this->callableObject;
+    }
+
+    /**
      * @param string $attributeName
      * @return CallableRule
      */
@@ -54,6 +71,14 @@ class CallableRule extends BasicRule
     {
         $this->attributeName = $attributeName;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAttributeName (): string
+    {
+        return $this->attributeName;
     }
 
     /**
@@ -67,13 +92,11 @@ class CallableRule extends BasicRule
     }
 
     /**
-     * @param callable|null $callableObject
-     * @return CallableRule
+     * @return string
      */
-    public function setCallable (callable $callableObject): CallableRule
+    public function getWrongType (): string
     {
-        $this->callableObject = $callableObject;
-        return $this;
+        return $this->wrongType;
     }
 
     /**
@@ -108,9 +131,8 @@ class CallableRule extends BasicRule
      */
     public static function selfCreateFromValidatorConfig (array $config): CallableRule
     {
-        // $a =
-        // assert(empty($config[0]), 'Attribute name is empty. '.print_r($config[0], true));
-        assert($config[0], 'Attribute name is empty, $config[0]');
+        assert(!empty($config[0]), 'Attribute is empty, $config[0]');
+        assert(!empty($config[1]), 'Callable object is empty, $config[1]');
 
         /*if (empty($config[0])) {
             throw new RuleConfigurationException('Attribute parameter empty', null, $config);
@@ -126,9 +148,17 @@ class CallableRule extends BasicRule
             throw new RuleConfigurationException('Object is not callable', null, $config);
         }
 
-        return new CallableRule($callableObject);
-        // if (!empty($config['message'])) $r->setMessage($config['message']);
-        // if (!empty($config['message'])) $r->setMessage($config['message']);
+        $r = new CallableRule($callableObject);
+        $r->setAttributeName((string) $config[0]);
+
+        if (!empty($config['wrongType'])) {
+            $r->setWrongType($config['wrongType']);
+            /*$r->setWrongType(static::makeFormErrorString($config['wrongType'], [
+                ':attribute' => implode(', ', $attributes)
+            ]));*/
+        }
+
+        return $r;
     }
 
 }

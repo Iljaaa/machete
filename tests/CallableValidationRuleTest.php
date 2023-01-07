@@ -2,7 +2,6 @@
 
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
-use Iljaaa\Machete\rules\BasicRule;
 use Iljaaa\Machete\rules\validationRules\CallableRule;
 
 /**
@@ -23,7 +22,7 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
     public function testCallableObject ()
     {
         $c = new class {
-            public function testValidationMethod($value, string $attribute, BasicRule $r): bool {
+            public function testValidationMethod($value, string $attribute, CallableRule $r): bool {
                 return true;
             }
         };
@@ -32,13 +31,13 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($result, 'new stdClass() is valid string');
 
 
-        $result = (new CallableRule(function ($value, string $attribute, BasicRule $r) {
+        $result = (new CallableRule(function ($value, string $attribute, CallableRule $r) {
             return true;
         }))->validate(123);
         $this->assertTrue($result, 'new stdClass() is valid string');
 
         // fn
-        $result = (new CallableRule(fn ($value, string $attribute, BasicRule $r) => $r->addError('i sire it\s wrong')->isValid()))->validate(123);
+        $result = (new CallableRule(fn ($value, string $attribute, CallableRule $r) => $r->addError('i sire it\s wrong')->isValid()))->validate(123);
         $this->assertFalse($result, 'new stdClass() is valid string');
     }
 
@@ -68,10 +67,14 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
      */
     public function testSetAttributeName()
     {
-        $result = (new CallableRule(function ($value, string $attribute, BasicRule $r)  {
+        $rule = (new CallableRule(function ($value, string $attribute, CallableRule $r)  {
             $this->assertEquals('testAttribute', $attribute, 'wrong attribute');
             return true;
-        }))->setAttributeName("testAttribute")->validate(123);
+        }))->setAttributeName('testAttribute');
+
+        $this->assertEquals('testAttribute', $rule->getAttributeName());
+
+        $result = $rule->validate(123);
         $this->assertTrue($result);
     }
 
@@ -165,7 +168,7 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
 
         // override message
         // $rule = (new CallableRule(fn() => true));
-        $rule = new CallableRule(function ($value, string $attribute, BasicRule $r) {
+        $rule = new CallableRule(function ($value, string $attribute, CallableRule $r) {
             $r->addError('test error');
             return false;
         });
@@ -175,15 +178,27 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test error', $rule->getFirstError(), 'Wrong first error');
         $this->assertEquals(['test error'], $rule->getErrors(), 'Wrong errors array');
 
+        $rule = new CallableRule();
+        $this->assertEquals('Current object is not callable', $rule->getWrongType());
+
+        $rule = CallableRule::selfCreateFromValidatorConfig(['name', fn() => false, 'wrongType' => 'test message']);
+        $this->assertEquals('test message', $rule->getWrongType());
+        $this->assertEquals('name', $rule->getAttributeName());
+        $this->assertFalse($rule->validate(null));
+
+        $rule = CallableRule::selfCreateFromValidatorConfig([['name', 'value'], fn() => false, 'wrongType' => 'test message']);
+        $this->assertEquals('Array', $rule->getAttributeName());
+        $this->assertEquals('test message', $rule->getWrongType());
+        $this->assertFalse($rule->validate(null));
     }
 
     /**
      * @param $value
      * @param string $attribute
-     * @param BasicRule $r
+     * @param CallableRule $r
      * @return bool
      */
-    public function successResulCallableFunction($value, string $attribute, BasicRule $r): bool
+    public function successResulCallableFunction($value, string $attribute, CallableRule $r): bool
     {
         return true;
     }
@@ -191,10 +206,10 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $value
      * @param string $attribute
-     * @param BasicRule $r
+     * @param CallableRule $r
      * @return bool
      */
-    public static function successResulCallableStaticFunction($value, string $attribute, BasicRule $r): bool
+    public static function successResulCallableStaticFunction($value, string $attribute, CallableRule $r): bool
     {
         return true;
     }
@@ -202,10 +217,10 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $value
      * @param string $attribute
-     * @param BasicRule $r
+     * @param CallableRule $r
      * @return bool
      */
-    public function errorResulCallableFunction($value, string $attribute, BasicRule $r): bool
+    public function errorResulCallableFunction($value, string $attribute, CallableRule $r): bool
     {
         $r->addError('test error');
         return $r->isValid();
@@ -214,10 +229,10 @@ class CallableValidationRuleTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $value
      * @param string $attribute
-     * @param BasicRule $r
+     * @param CallableRule $r
      * @return bool
      */
-    public static function errorResulCallableStaticFunction($value, string $attribute, BasicRule $r): bool
+    public static function errorResulCallableStaticFunction($value, string $attribute, CallableRule $r): bool
     {
         $r->addError('test error');
         return false;

@@ -75,21 +75,11 @@ abstract class Validation
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     * @return void
-     */
-    public function __set(string $name, $value): void
-    {
-        $this->setValue($name, $value);
-    }
-
-    /**
      * @param string $key
      * @param mixed $value
      * @return void
      */
-    private function setValue (string $key, $value)
+    public function setValue (string $key, $value)
     {
         // check is key form attribute
         if (property_exists($this, $key)) {
@@ -102,26 +92,44 @@ abstract class Validation
     }
 
     /**
-     * @param $name
-     * @return void
+     * @return array
      */
-    public function __get($name)
+    public function getData (): array
     {
-        return $this->getValue($name);
+        return $this->data;
     }
 
     /**
      * Getting value wrap
-     * @param $name
+     * @param string $name
      * @return mixed
      */
-    private function getValue ($name)
+    public function getValue (string $name)
     {
         if (property_exists($this, $name)) {
             return $this->{$name};
         }
 
         return $this->data[$name] ?? null;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
+    public function __set(string $name, $value): void
+    {
+        $this->setValue($name, $value);
+    }
+
+    /**
+     * @param $name
+     * @return void
+     */
+    public function __get($name)
+    {
+        return $this->getValue($name);
     }
 
     /**
