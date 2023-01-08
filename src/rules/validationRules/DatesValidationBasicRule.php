@@ -138,13 +138,13 @@ abstract class DatesValidationBasicRule extends BasicRule
     }
 
     /**
-     * @param string $min
+     * @param string $max
      * @param string|null $format
      * @return DatesValidationBasicRule
      */
-    public function setMaxAsString (string $min, ?string $format = null): DatesValidationBasicRule
+    public function setMaxAsString (string $max, ?string $format = null): DatesValidationBasicRule
     {
-        $this->max = DateTime::createFromFormat($format ?? $this->getFormat(), $min);
+        $this->max = DateTime::createFromFormat($format ?? $this->getFormat(), $max);
         return $this;
     }
 

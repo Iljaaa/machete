@@ -6,6 +6,7 @@ namespace Iljaaa\Machete\rules;
 use Iljaaa\Machete\exceptions\RuleConfigurationException;
 use Iljaaa\Machete\exceptions\ValidationException;
 use Iljaaa\Machete\rules\validationRules\CallableRule;
+use Iljaaa\Machete\rules\validationRules\DatesValidationBasicRule;
 use Iljaaa\Machete\rules\validationRules\FloatRule;
 use Iljaaa\Machete\rules\validationRules\InRule;
 use Iljaaa\Machete\rules\validationRules\IntRule;
@@ -140,6 +141,8 @@ class RulesCollection implements \Iterator
             case 'in'       : return InRule::selfCreateFromValidatorConfig($ruleConfig);
             case 'regex'    : return RegexRule::selfCreateFromValidatorConfig($ruleConfig);
             case 'rule'     : return UserRuleWrapper::selfCreateFromValidatorConfig($ruleConfig);
+            case 'date'     :
+            case 'datetime' : return DatesValidationBasicRule::selfCreateFromValidatorConfig($ruleConfig);
         }
 
         return null;

@@ -40,7 +40,8 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                      [['notSet'], 'required'],
                      [['valid'], 'required'],
                      ['phones', 'in', ['345', '123', '333']],
-                     [['number', 'valid'], fn () => true]
+                     [['number', 'valid'], fn () => true],
+                     ['dateOfBirth', 'date']
                  ];
              }
          };
@@ -49,6 +50,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             'string' => '',
             'number' => 10,
             'valid' => 'some value',
+            'dateOfBirth' => '12-12-2000'
         ]);
 
 
@@ -324,6 +326,33 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @throws ValidationException
+     */
+    public function testExampleFromReadMe() {
+
+        assert_options(ASSERT_ACTIVE, 1);
+
+        $form = new YourFromValidationClass();
+        $form->load([
+            'name' => 'Vlad Țepeș III',
+            'dateOfBirth' => '1430-05-01'
+        ]);
+
+        $result = $form->validate();
+        $this->assertTrue($result);
+
+        if ($form->validate()){
+            $this->assertEmpty($form->getErrors());
+        }
+        else {
+            $errors = $form->getErrors();
+        }
+
+
+        $this->assertEmpty($form->getErrors());
+    }
+
+    /**
      * static test function
      * @return bool
      */
@@ -342,4 +371,20 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $r->addError('error form functionForTestStaticCallAddError');
         return false;
     }
+}
+
+
+class YourFromValidationClass extends Validation
+{
+    public string $name = "";
+
+    public function rules (): array
+    {
+        return [
+            [['name', 'dateOfBirth'], 'required'],
+            ['name', 'string', 'max' => 100],
+            ['dateOfBirth', 'date'],
+        ];
+    }
+
 }
