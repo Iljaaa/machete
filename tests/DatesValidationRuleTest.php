@@ -10,7 +10,7 @@ use Iljaaa\Machete\rules\validationRules\DateTimeRule;
  * Test stringDate rule
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.0
+ * @version 1.0.2
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -133,7 +133,6 @@ class StringDateValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($result, $rule->getFirstError());
 
 
-
         // incorrect
         $rule = (new DateTimeRule())->setMin($tomorrow);
         $this->assertEquals($tomorrow, $rule->getMin());
@@ -146,6 +145,57 @@ class StringDateValidationRuleTest extends \PHPUnit\Framework\TestCase
         $result = $rule->validate(new DateTime());
         $this->assertIsBool($result, $rule->getFirstError());
         $this->assertFalse($result, $rule->getFirstError());
+    }
+
+    /**
+     * Test min max string length validation
+     * @throws ValidationException
+     */
+    public function testMinMaxOnStaticCreate ()
+    {
+        $tomorrow = (new DateTime())->modify("+1 days")->setTime(0, 0);
+
+        $yesterday = (new DateTime())->modify("-1 days")->setTime(0, 0);
+
+        // correct
+        $rule = DateTimeRule::selfCreateFromValidatorConfig(['attribute', 'datetime', 'min' => $yesterday]);
+        $this->assertEquals($yesterday, $rule->getMin());
+        $result = $rule->validate(new DateTime());
+        $this->assertIsBool($result, $rule->getFirstError());
+        $this->assertTrue($result, $rule->getFirstError());
+
+        $rule = DateTimeRule::selfCreateFromValidatorConfig(['attribute', 'datetime', 'max' => $tomorrow]);
+        $this->assertEquals($tomorrow, $rule->getMax());
+        $result = $rule->validate(new DateTime());
+        $this->assertIsBool($result, $rule->getFirstError());
+        $this->assertTrue($result, $rule->getFirstError());
+
+        $rule = DateTimeRule::selfCreateFromValidatorConfig(['attribute', 'datetime', 'min' => $yesterday->format(DateTimeRule::FORMAT)]);
+        $this->assertEquals($yesterday, $rule->getMin());
+        $result = $rule->validate(new DateTime());
+        $this->assertIsBool($result, $rule->getFirstError());
+        $this->assertTrue($result, $rule->getFirstError());
+
+        $rule = DateTimeRule::selfCreateFromValidatorConfig(['attribute', 'datetime', 'max' => $tomorrow->format(DateTimeRule::FORMAT)]);
+        $this->assertEquals($tomorrow, $rule->getMax());
+        $result = $rule->validate(new DateTime());
+        $this->assertIsBool($result, $rule->getFirstError());
+        $this->assertTrue($result, $rule->getFirstError());
+
+        // incorrect
+        $rule = DateTimeRule::selfCreateFromValidatorConfig(['attribute', 'datetime', 'min' => $tomorrow->format(DateTimeRule::FORMAT)]);
+        $this->assertEquals($tomorrow, $rule->getMin());
+        $result = $rule->validate(new DateTime());
+        $this->assertIsBool($result, $rule->getFirstError());
+        $this->assertFalse($result, $rule->getFirstError());
+
+        $rule = DateTimeRule::selfCreateFromValidatorConfig(['attribute', 'datetime', 'max' => $yesterday->format(DateTimeRule::FORMAT)]);
+        $this->assertEquals($yesterday, $rule->getMax());
+        $result = $rule->validate(new DateTime());
+        $this->assertIsBool($result, $rule->getFirstError());
+        $this->assertFalse($result, $rule->getFirstError());
+        $this->assertEquals('attribute is after 2023-01-09 00:00 value', $rule->getFirstError());
+
     }
 
     /**

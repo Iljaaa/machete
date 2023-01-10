@@ -12,7 +12,7 @@ use Iljaaa\Machete\Validation;
  * Basic class for dates rules
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -293,13 +293,17 @@ abstract class DatesValidationBasicRule extends BasicRule
             $r->setFormat($config['format']);
         }
 
-        /*if (!empty($config['min'])) {
-            $r->setMin((int) $config['min']);
+        if (!empty($config['min'])) {
+            if (is_string($config['min'])) $r->setMinAsString($config['min']);
+            elseif ($config['min'] instanceof \DateTime) $r->setMin($config['min']);
+            else throw new RuleConfigurationException('Unexpected type of min', $config);
         }
 
         if (!empty($config['max'])) {
-            $r->setMax((int) $config['max']);
-        }*/
+            if (is_string($config['max'])) $r->setMaxAsString($config['max']);
+            elseif ($config['max'] instanceof \DateTime) $r->setMax($config['max']);
+            else throw new RuleConfigurationException('Unexpected type of max', $config);
+        }
 
         // set messages
 
@@ -314,19 +318,19 @@ abstract class DatesValidationBasicRule extends BasicRule
             ':format' => $r->getFormat()
         ]));
 
-        /*$m = !empty($config['beforeMin'] ?? static::$defaultErrorDescriptions['beforeMin'];
+        $m = $config['beforeMin'] ?? static::$defaultErrorDescriptions['beforeMin'];
         $min = $r->getMin();
-        $r->setWrongType(static::makeFormErrorString($m, [
+        $r->setBeforeMin(static::makeFormErrorString($m, [
             ':attribute' => implode(', ', $attributes),
             ':min' => $min ? $min->format($r->getFormat()) : ''
         ]));
 
-        $m = !empty($config['afterMax'] ?? static::$defaultErrorDescriptions['afterMax'];
+        $m = $config['afterMax'] ?? static::$defaultErrorDescriptions['afterMax'];
         $max = $r->getMax();
-        $r->setWrongType(static::makeFormErrorString($m, [
+        $r->setAfterMax(static::makeFormErrorString($m, [
             ':attribute' => implode(', ', $attributes),
             ':max' => $max ? $max->format($r->getFormat()) : ''
-        ]));*/
+        ]));
 
         return $r;
     }
