@@ -37,7 +37,7 @@ class UserRuleWrapper extends BasicRule
      */
     public function validate ($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
-        assert($this->userRule, 'you forgot $this->userRole');
+        assert($this->userRule !== null, 'you forgot $this->userRole');
 
         if (!$this->userRule){
             throw new ValidationException('User role not sent');
