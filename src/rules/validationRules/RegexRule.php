@@ -91,7 +91,7 @@ class RegexRule extends BasicRule
     public static function selfCreateFromValidatorConfig (array $config): RegexRule
     {
         $attributes = RulesCollection::makeAttributesArrayFromRuleConfig($config);
-        assert($attributes, 'Attribute name is empty, $config[0]');
+        assert(!empty($attributes), 'Attribute name is empty, $config[0]');
 
         $regex = $config['regex'] ?? $config[2] ?? null;
         assert($regex != null, 'Regex not found in config, $config[0]');

@@ -143,7 +143,7 @@ class CallableRule extends BasicRule
         assert(isset($config[1]), 'Callable object is empty, $config[1]');
 
         $attributes = RulesCollection::makeAttributesArrayFromRuleConfig($config);
-        assert($attributes, 'Attribute name is empty, $config[0]');
+        assert(!empty($attributes), 'Attribute name is empty, $config[0]');
 
         if (empty($attributes)) {
             throw new RuleConfigurationException('Attribute name is empty', $config);

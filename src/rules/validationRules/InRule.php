@@ -114,7 +114,7 @@ class InRule extends BasicRule
      */
     public function validate($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
-        assert($this->haystack, 'Haystack name is empty, use ->setHaystack()');
+        assert($this->haystack !== null, 'Haystack name is empty, use ->setHaystack()');
 
         if ($this->haystack === null){
             throw new ValidationException('Haystack for validate not set');
@@ -131,7 +131,7 @@ class InRule extends BasicRule
     public static function selfCreateFromValidatorConfig(array $config): InRule
     {
         $attributes = RulesCollection::makeAttributesArrayFromRuleConfig($config);
-        assert($attributes, 'Attribute name is empty, $config[0]');
+        assert(!empty($attributes), 'Attribute name is empty, $config[0]');
 
         $haystack = $config['haystack'] ?? $config[2] ?? null;
         assert($haystack != null, 'Haystack not found in config, $config[2]');

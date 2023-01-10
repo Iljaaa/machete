@@ -57,7 +57,7 @@ class UserRuleWrapper extends BasicRule
      */
     public static function selfCreateFromValidatorConfig (array $config): UserRuleWrapper
     {
-        assert($config[0], 'Attribute name empty');
+        assert(!empty($config[0]), 'Attribute name empty');
 
         $r = $config['rule'] ?? $config[2] ?? null;
 

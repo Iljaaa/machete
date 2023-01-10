@@ -74,7 +74,7 @@ class RequiredRule extends BasicRule
     public static function selfCreateFromValidatorConfig(array $config): RequiredRule
     {
         $attributes = RulesCollection::makeAttributesArrayFromRuleConfig($config);
-        assert($attributes, 'Attribute name is empty, $config[0]');
+        assert(!empty($attributes), 'Attribute name is empty, $config[0]');
 
         if (empty($attributes)) {
             throw new RuleConfigurationException('Attribute name is empty', $config);
