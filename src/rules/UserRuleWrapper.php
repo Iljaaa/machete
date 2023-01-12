@@ -10,7 +10,7 @@ use Iljaaa\Machete\Validation;
  * Wrapper for user role
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -43,9 +43,16 @@ class UserRuleWrapper extends BasicRule
             throw new ValidationException('User role not sent');
         }
 
+        // set default return
+        $this->validationResult->clearErrorsAndSetValidTrue();
+
         //  call user validator
+        // $result = $this->userRule->validate($value, $attribute, $this, $validation);
         $result = $this->userRule->validate($value, $attribute, $this, $validation);
-        $this->validationResult->setIsValid($result);
+        if (!$result) {
+            $this->validationResult->setIsNotValid();
+        }
+        // $this->validationResult->setIsValid($result);
 
         return $result;
     }
