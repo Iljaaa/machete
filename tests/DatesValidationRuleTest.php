@@ -194,7 +194,7 @@ class StringDateValidationRuleTest extends \PHPUnit\Framework\TestCase
         $result = $rule->validate(new DateTime());
         $this->assertIsBool($result, $rule->getFirstError());
         $this->assertFalse($result, $rule->getFirstError());
-        $this->assertEquals('attribute is after 2023-01-09 00:00 value', $rule->getFirstError());
+        $this->assertEquals('attribute is after '.$yesterday->format($rule->getFormat()).' value', $rule->getFirstError());
 
     }
 

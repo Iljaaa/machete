@@ -122,7 +122,7 @@ class CallableRule extends BasicRule
         }
 
         // drop to default rue result
-        $this->validationResult->setIsValid();
+        $this->validationResult->clearErrorsAndSetValidTrue();
 
         $r = call_user_func($this->callableObject, $value, $this->attributeName, $this);
 

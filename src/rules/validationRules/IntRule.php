@@ -50,7 +50,7 @@ class IntRule extends NumericValidationBasicRule
         }
 
         // drop default result to true, and clean errors
-        $this->validationResult->setIsValid();
+        $this->validationResult->clearErrorsAndSetValidTrue();
 
         // min max
         $this->validateMinMax($value);

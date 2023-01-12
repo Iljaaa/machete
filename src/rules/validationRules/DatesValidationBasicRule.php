@@ -239,7 +239,7 @@ abstract class DatesValidationBasicRule extends BasicRule
         }
 
         // drop default result to true, and clean errors
-        $this->validationResult->setIsValid();
+        $this->validationResult->clearErrorsAndSetValidTrue();
 
         if (!is_string($value)) {
             // $this->validationResult->addError($this->wrongType." :::: ".((is_object($value))? get_class($value) : gettype($value)));

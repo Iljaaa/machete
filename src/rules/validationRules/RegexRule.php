@@ -124,7 +124,7 @@ class RegexRule extends BasicRule
         // $result = !empty($matches);
 
         // drop default result to true, and clean errors
-        $this->validationResult->setIsValid();
+        $this->validationResult->clearErrorsAndSetValidTrue();
 
         if ($this->isMatch($this->regex, $value) == false) {
             $this->validationResult->addError($this->message);

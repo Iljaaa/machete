@@ -9,7 +9,7 @@ use Iljaaa\Machete\Validation;
  * Test implement rule interface
  *
  * @author ilja <the.ilja@gmail.com>
- * @version 1.0.1
+ * @version 1.0.2
  * @package Iljaaa\Machete
  * @see https://github.com/Iljaaa/machete
  */
@@ -247,8 +247,8 @@ class SelfValidationRuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test error', $form->getFirstErrorForAttribute('sName'));
 
         $this->assertFalse($form->isValid(), 'wrong result');
-        $this->assertFalse($form->validate(['name']), 'wrong result');
-        $this->assertFalse($form->isValid(), 'wrong result');
+        $this->assertTrue($form->validate(['name']), 'wrong result');
+        $this->assertTrue($form->isValid(), 'wrong result');
         $this->assertEquals('', $form->getFirstError(), 'Wrong first error');
         $this->assertEquals([], $form->getErrors());
         $this->assertEquals([], $form->getErrorsForAttribute('test'));

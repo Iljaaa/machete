@@ -37,10 +37,23 @@ class RuleValidationResult
     }
 
     /**
+     * Clean errors and set result in true
      * @return void
      */
-    public function setIsValid() {
+    public function clearErrorsAndSetValidTrue(): RuleValidationResult
+    {
         $this->isValid = true;
+        $this->errors = [];
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setIsNotValid (): RuleValidationResult
+    {
+        $this->isValid = false;
+        return $this;
     }
 
     /**

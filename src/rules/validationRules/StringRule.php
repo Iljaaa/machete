@@ -188,7 +188,7 @@ class StringRule extends BasicRule
         }
 
         // drop default result to true, and clean errors
-        $this->validationResult->setIsValid();
+        $this->validationResult->clearErrorsAndSetValidTrue();
 
         // min max length
         if ($this->min != null || $this->max != null)

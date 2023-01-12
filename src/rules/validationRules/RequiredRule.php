@@ -55,7 +55,7 @@ class RequiredRule extends BasicRule
     public function validate($value, ?string $attribute = null, ?Validation $validation = null): bool
     {
         // drop default result to true, and clean errors
-        $this->validationResult->setIsValid();
+        $this->validationResult->clearErrorsAndSetValidTrue();
 
         // min max length
         if (empty($value))

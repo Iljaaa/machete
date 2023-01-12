@@ -120,7 +120,16 @@ class InRule extends BasicRule
             throw new ValidationException('Haystack for validate not set');
         }
 
-        return $this->inArray($value, $this->haystack, $this->strict);
+        // drop default result to true, and clean errors
+        $this->validationResult->clearErrorsAndSetValidTrue();
+
+        $result = $this->inArray($value, $this->haystack, $this->strict);
+
+        if (!$result) {
+            $this->validationResult->addError($this->message);
+        }
+
+        return $result;
     }
 
     /**
@@ -164,11 +173,7 @@ class InRule extends BasicRule
      */
     public function inArray($needle, $haystack, bool $strict = false): bool
     {
-        // drop default result to true, and clean errors
-        $this->validationResult->setIsValid();
-
         if (!in_array($needle, $haystack, $strict)) {
-            $this->validationResult->addError($this->message);
             return false;
         }
 
