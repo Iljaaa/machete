@@ -4,11 +4,11 @@ Another PHP validation library
 
 Written for PHP 7.4. Not tested on version 8, but it must be fine
 
-! Machete don't applies any prefilters on yore data and modified it. 
+! Machete doesn't apply any prefilters on your data and modify it. 
 
-Dont use it with not pre cleared data, like $_GET, $_POST etc...
+Don't use it without pre cleared data, like $_GET, $_POST etc...
 
-Machete don works with $_FILES data.
+Machete doesn't work with $_FILES data.
 
 Contents:
 - [installation](#installation)
@@ -68,34 +68,34 @@ else {
 
 # Installation
 
-Wia composer 
+Via composer 
 
 ````
 composer require iljaaa/machete
 ````
 
-Or download it, define iljaaa/machete namespace in autoload und use
+Or download it, define iljaaa/machete namespace in autoload and use
 
 # How to use validation for forms
 
 1. Create form class and extend it by Validate class ([more info](#form-validation-class))
 2. [Override rules method](#rules-method)
-3. [Load data in you class](#loading-data-in-form)
-4. Call the validate() method. It return boolean result of validate
+3. [Load data in your class](#loading-data-in-form)
+4. Call the validate() method. It returns the boolean result of the validation
 
 After validation use method [isValid](#validator-state-public-methods) for get validation result without check data, 
 it's faster because the result of validations saved in state. 
 
 Before you call validate the method isValid will always return false.
 
-For check is was data in form checked before (was call of validate method) use [isVasValidated](#validator-state-public-methods)
+To check: has the data in the form checked before? (was there call of the validate method) use [isVasValidated](#validator-state-public-methods)
 
 ## Form validation class
 
-For create self from validation class just extend <b>\Iljaaa\Machete\Validation</b>
+To create your own form of the validation class, just extend <b>\Iljaaa\Machete\Validation</b>
 
-It's abstract class, and it has only one abstract method <b>rules()</b><br>
-for return array of validation rules
+It's an abstract class, and it has only one abstract method <b>rules()</b><br>
+to return array of validation rules
 
 ```php
 public function rules(): array;
@@ -109,22 +109,22 @@ class FormValidation extends \Iljaaa\Machete\Validation
     public function rules(): array 
     {
         return [
-            ['attribute', 'rule', ... additional otions],
+            ['attribute', 'rule', ... additional options],
         ];
     }
 
 } 
 ```
 
-## Loading data in form
+## Loading data in the form
 
-For load data in validation class use method <b>load</b>:
+To load data in the validation class use method <b>load</b>:
 
 ```php
 public function load(array $data): void;
 ```
 
-Data will save in internal storage. 
+Data will be saved in internal storage. 
 
 Set one item value
 
@@ -132,15 +132,15 @@ Set one item value
 public function setValue (string $name, $value): void
 ```
 
-Or use magic (it will be call getValue in base):
+Or use magic (it will call setValue in base):
 
 ```php
 $form->yourDataKey = $value;
 ```
 
-## Getting data from form
+## Getting data from the form
 
-To get data from storage use:
+To get data from the internal storage use:
 
 ```php
 public function getData(): array;
@@ -152,16 +152,16 @@ Get one item from data:
 public function getValue (string $name): mixed
 ```
 
-or use magic (it will be call getValue in base):
+or use magic (it will call getValue in base):
 
 ```php
 $it = $form->yourDataKey;
 ```
 
-You can validate protected and public attributes of child validation class.<br> 
+You can validate protected and public attributes of the child validation class.<br> 
 
-If you define named attribute in child class, and use any of the methods from the loading methods, 
-value will be not putted in internal storage it will be saved to your attribute
+If you define named attribute in child class, and use any method from the loading methods, 
+value will be not put in the internal storage it will be saved to your attribute
 
 Example
 
@@ -181,7 +181,7 @@ class FormValidation extends \Iljaaa\Machete\Validation
 
 $form = new FormValidation();
 $forn->load([
-    'name' => 'Ilja', // this values will be written to $form->name
+    'name' => 'Ilja', // this value will be written to $form->name
     'number' => 1 // this to internal storage
 ]);
 
@@ -189,7 +189,7 @@ $forn->load([
 
 ## Rules method
 
-Rules method must return array of rules. Every rule is array of description one validation rule. 
+Rules method must return an array of rules. Every rule is an array of description one validation rule. 
 It must be in same syntax
 
 ```php
@@ -208,19 +208,20 @@ public function rules(): array
 Rule array looks like this:
 
 ```php
-['attribute_name', 'rule', ... additonal params],
+['attribute_name', 'rule', ... additonal parameters],
 ```
 
-First element of array is form attribute name for validation. 
-You may use array of names if you need to check any attributes 
+The First element of an array is a form attribute name for the validation. 
+You may use an array of names if you need to check more then one an attribute 
 
 ```php
-[['attribute_name', 'second_attribute'], 'rule', ... additonal params],
+[['attribute_name', 'second_attribute'], 'rule', ... additonal parameters],
 ```
 
-Second is rule name, you may use provided rules (like: string, int. in ....) or create self validation method 
+The second is the rule name, you may use provided rules (like: string, int. in ....) 
+or create self validation method 
 
-Next are additional options, different for every rule
+Next goes are an additional options, different for every rule
 
 
 # Get validation error messages
@@ -235,36 +236,36 @@ public function getErrors(): array
 
 ```php
 /**
- * First found error 
+ * First error found  
  */
 public function getFirstError(): string
 ```
 
 ```php
 /**
- * Errors array for attribute 
+ * Array of errors for attribute 
  */
 public function getErrorsForAttribute(string $attribute): array
 ```
 
 ```php
 /**
- * First found error for attribute
+ * First error found for attribute
  */
 public function getFirstErrorForAttribute(string $attribute): string
 ```
 
 # Use rules as stand alone
 
-Most rules can be used without form. 
+Most rules can be used without the form. 
 Can create instance of validation rule, 
-parameterize it and pas data to validate method.
+parameterize it and pass data to validate method.
 
 Chapter of provided rules has examples of every rule.
 
 # Provided rules
 
-Rule short name set in rule described array in second position
+Rule short name must be described in the second position of the rule array
 
 - [required](#required)
 - [string](#string)
@@ -275,24 +276,24 @@ Rule short name set in rule described array in second position
 
 ## required
 
-Required rule use <b>empty()</b> function for check value. 
+Required rule use <b>empty()</b> function to check the value. 
 Be careful with zeros.
 
 ```php
 ['attribute',  'required', ....]
 ```
 
-Rule additional params:
+Rule additional parameters:
 
-This rules doesn't have additional params.
+This rule doesn't have additional parameters.
 
 Overridden error messages:
 
-| Param   | type   | Are                                      | Default                |
-|---------|--------|:-----------------------------------------|:-----------------------|
-| message | string | error message on main check false result | :attribute is required |
+| Param   | type   | Are                                                 | Default                |
+|---------|--------|:----------------------------------------------------|:-----------------------|
+| message | string | error message on the main check of the false result | :attribute is required |
 
-When you override default error messages you can use named variables to be replaced by values in error message.
+When you override default error messages you can use named variables to be replaced by values in the error message.
 
 Replaced values:
 
@@ -301,20 +302,20 @@ Replaced values:
 
 <b>stand alone use</b>
 
-Tell me any reason use it rule stand alone? Use empty() function 
+Tell me any reason to use this rule standalone? Use empty() function 
 
 ## string
 
-String rule use ms_strlen function for calculate string length.
+String rule use ms_strlen function to calculate the string length.
 
-Before other checks a value will be checked <b>is_string</b> function.   
-And if it return a false result other checks of rule will be not run 
+Before other checks a value will be checked with <b>is_string</b> function.   
+And if it returns a false result, other checks of rule will not run 
 
 ```php
 ['attribute',  'string',  ...]
 ```
 
-Rule additional params:
+Rule additional parameters:
 
 | Param     | type   | Are                   | Default            |
 |-----------|--------|:----------------------|:-------------------|
@@ -323,11 +324,11 @@ Rule additional params:
 
 Overridden error messages:
 
-| Param     | type   | Are                                         | Default                              |
-|-----------|--------|:--------------------------------------------|:-------------------------------------|
-| wrongType | string | error message if you try check not a string | :attribute has wrong type            |
-| toShort   | string | error message if value shorter of min value | :attribute to short, min length :min |
-| toLong    | string | error message if value longer of max value  | :attribute to long, max length :max  |
+| Param     | type   | Are                                                | Default                              |
+|-----------|--------|:---------------------------------------------------|:-------------------------------------|
+| wrongType | string | error message if you try to check not a string     | :attribute has wrong type            |
+| toShort   | string | error message if value is shorter than a min value | :attribute to short, min length :min |
+| toLong    | string | error message if value is longer than a max value  | :attribute to long, max length :max  |
 
 Replaced values:
 
@@ -336,11 +337,11 @@ Replaced values:
 
 <b>toShort</b> 
 - :attribute - from attribute name
-- :min - min len for check
+- :min - min len to check
 
 <b>toLong</b> 
 - :attribute - from attribute name
-- :max - max len for check
+- :max - max len to check
 
 <b>stand alone use</b>
 
@@ -356,16 +357,17 @@ $result = (new StringRule())
 
 ## int and float
 
-If you use float validator and pas to validate function int value, it will be auto converted to float. 
+If you use float validator and pass to validation 
+function int value, it will be auto converted to float. 
 
-For all other types and you get wrong type error and false validation result.  
+For all other types and you get the wrong type error and false validation result.  
 
 ```php
 ['attribute',  'float', ....]
 ['attribute',  'int', ....]
 ```
 
-Additional params:
+Additional parameters:
 
 | Param | type      | Are           | Default for int | Default for float |
 |-------|-----------|:--------------|:----------------|-------------------|
@@ -374,11 +376,11 @@ Additional params:
 
 Overridden error messages:
 
-| Param     | type   | Are                                                        | Default for int                      |
-|-----------|--------|:-----------------------------------------------------------|:-------------------------------------|
-| wrongType | string | error message if you try checked something with wrong type | :attribute has wrong type            |
-| toSmall   | string | error message if value less min                            | :attribute to small, min length :min |
-| toBig     | string | error message if value mere max                            | :attribute to big, max length :max   |
+| Param     | type   | Are                                                         | Default for int                      |
+|-----------|--------|:------------------------------------------------------------|:-------------------------------------|
+| wrongType | string | error message if you try to check something with wrong type | :attribute has wrong type            |
+| toSmall   | string | error message if value is less then a min value             | :attribute to small, min length :min |
+| toBig     | string | error message if value is mere then a max value             | :attribute to big, max length :max   |
 
 Replaced values:
 
@@ -387,11 +389,11 @@ Replaced values:
 
 <b>toSmall</b>
 - :attribute - form attribute name
-- :min - min value for check
+- :min - min value to check
 
 <b>toBig</b>
 - :attribute - form attribute name
-- :max - max value for check
+- :max - max value to check
 
 <b>stand alone use</b>
 
@@ -407,7 +409,7 @@ $result = (new IntRule())
 
 ## date and datetime
 
-Used for check form date and datetime field values or \DateTime objects
+Used to check form date and datetime field values or \DateTime objects
 
 It's same validator with different date format:
 - data: Y-m-d
@@ -418,22 +420,22 @@ It's same validator with different date format:
 ['attribute',  'datetime', ....]
 ```
 
-Additional params:
+Additional parameters:
 
-| Param  | type                              | Are              | Default for date | Default for datetime |
-|--------|-----------------------------------|:-----------------|------------------|:---------------------|
-| format | string                            | Self date format | Y-m-d            | Y-m-d H:i            |
-| min    | string in rule format / \DateTime | minimal date     | null             | null                 |
-| min    | string in rule format / \DateTime | maximal date     | null             | null                 |
+| Param  | type                               | Are              | Default for date | Default for datetime |
+|--------|------------------------------------|:-----------------|------------------|:---------------------|
+| format | string                             | Self date format | Y-m-d            | Y-m-d H:i            |
+| min    | string in rule format or \DateTime | minimal date     | null             | null                 |
+| min    | string in rule format or \DateTime | maximal date     | null             | null                 |
 
 Overridden error messages:
 
-| Param       | type   | Are                                                             | Default                           |
-|-------------|--------|-----------------------------------------------------------------|:----------------------------------|
-| wrongType   | string | error message if ypu try check something wrong                  | :attribute is not available value |
-| wrongFormat | string | error message if value will be not converted from cerent format | :attribute has wrong :format      |
-| beforeMin   | string | error message if value before min date                          | :attribute is before :min value   |
-| afterMax    | string | error message if value after max date                           | :attribute is after :max value    |
+| Param       | type   | Are                                                              | Default                           |
+|-------------|--------|------------------------------------------------------------------|:----------------------------------|
+| wrongType   | string | error message if ypu try to check something wrong                | :attribute is not available value |
+| wrongFormat | string | error message if value will not be converted from current format | :attribute has wrong :format      |
+| beforeMin   | string | error message if value is before than a min date                 | :attribute is before :min value   |
+| afterMax    | string | error message if value is after than a max date                  | :attribute is after :max value    |
 
 Replaced values:
 
@@ -478,10 +480,10 @@ In rule used <b>in_array</b> function in base
 ['age',  'in', array $haystack, ...]
 ```
 
-The third param mast be haystack array (or object with implementation of Traversable interface, need more tests) 
-If it not correct you get wrong param exception.
+The third parameter must be a haystack array (or an object with implementation of Traversable interface, more tests a needed) 
+If it is not correct you get wrong parameter exception.
 
-Additional params:
+Additional parameters:
 
 | Param   | type   | Are                              | Default      |
 |---------|--------|:---------------------------------|:-------------|
@@ -530,12 +532,12 @@ filter_var($value, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => $regex]]);
 ['attribute',  'regex', string $pattern, ...]
 ```
 
-The third param mast be regex pattern.  
+The third parameter must be a regex pattern.  
 If you not set item or set wrong you get rule configuration exception.
 
-Additional params:
+Additional parameters:
 
-Rule don't have additional params.
+Rule doesn't have additional parameters.
 
 Overridden error messages:
 
@@ -548,7 +550,7 @@ Replaced values:
 <b>message</b>
 - :attribute - from attribute name
 
-<b>stand alone use</b> 
+<b>standalone use</b> 
 
 ```php
 $result = (new RegexValidationRule())
@@ -570,13 +572,14 @@ $result = (new RegexValidationRule())
 
 ## Self validation functions
 
-You can use callable object in validation form just pas in on second position of rule array
+You can use callable object in validation form just pass it to second position of the rule array
 
-Validation will check return value of the object and if it returned false change form state on false.
+Validation will check return value of the object and if it returns false, 
+the validation will change form state to false.
 
-If your function return not boolean value you get a validation exception. 
+If your function doesn't returns a boolean value you will get a validation exception. 
 
-A few examples of create self validation functions:
+A few examples of creating self validation functions:
 
 ```php
 ['attributeName', function () {}]
@@ -585,28 +588,29 @@ A few examples of create self validation functions:
 ['attributeName', [YoureClass::class, 'publicStaticMethod']]
 ```
 
-Before object was called it will be checked by <b>is_callable</b> function<br>
-If the is_callable function return a false result, you get false result of all validation and wrong type error.
+Before the object is called it will be checked by <b>is_callable</b> function<br>
+If the is_callable function returns a false result, 
+you will get the false result of all validation and wrong type error.
 
 Overridden error messages:
 
-| Param     | type   | Default                                       |
-|-----------|--------|:----------------------------------------------|
-| wrongType | string | :attribute was checked by not callable object |
+| Param     | type   | Default                                            |
+|-----------|--------|:---------------------------------------------------|
+| wrongType | string | :attribute was is checked by a not callable object |
 
 
-On validation your function will be call with params:
+In validation your function will be called with these parameters:
 
 ```php
 function yourValidationFunction($value, string $attribute, CallableRule $rule): bool
 ```
 
 Where:
-- $value - it's value for check
+- $value - it's a value to check
 - string $attribute - name of form attribute
 - CallableRule $rule - instance of CallableRule class, it's wrapper for user callable functions
 
-For add error message from callable function use rule object:
+To add an error message from callable function use the rule object:
 ```php
 function yourValidationFunction($value, string $attribute, CallableRule $rule): bool 
 {
@@ -615,7 +619,7 @@ function yourValidationFunction($value, string $attribute, CallableRule $rule): 
 }
 ```
 
-stand alone use callable rule:
+standalone use callable rule:
 
 ```php
 (new CallableRule(fn ($value, string $attribute, CallableRule $r) => true))
@@ -630,10 +634,10 @@ stand alone use callable rule:
  
 # Self rule
 
-For create your own validation rule , 
+To create your own validation rule , 
 you need create class and implements <b>\Iljaaa\Machete\rules\UserRule</b> interface.
 
-Then you can use rule in validator lite this:
+Then you can use the rule in validator like this:
 
 ```php
 ['attributeName', 'rule', YourRuleClass::class]
@@ -646,13 +650,13 @@ public function validate ($value, string $attribute, UserRuleWrapper $userRuleWr
 
 Where:
 
-- $value - it's your value for check
+- $value - it's your value to check
 - string $attribute - name of form attribute
-- UserRuleWrapper $userRuleWrapper - this is instance of the special interface for wrap all user rules
-- Validation $validation - validation from instance
+- UserRuleWrapper $userRuleWrapper - this is an instance of the special interface to wrap all user rules
+- Validation $validation - validation form instance
 
-If your value is invalid add string error to wrapper object, 
-it also set validation result to false
+If your value is invalid, add string error to a wrapper object, 
+it also sets validation result to false
 
 ```php
 $userRuleWrapper->addError('test error');
@@ -704,13 +708,15 @@ class FormValidation extends \Iljaaa\Machete\Validation
 
 # Use form state in views
 
-If you want know was a form validated and what is result of validation do something like this:
+If you want know (was a form validated) what is the form of the validation 
+and what is result of validation, do something like this:
 
 ```php
 if ($form->isVasValidate() && $form->isValid() == false) echo "Form is not valid" 
 ```
 
-If you want know was a form loaded and validated. And if attribute has an error display it
+If you want to know (was a form loaded and validated) if the form was loaded and validated, 
+and if attribute has an error display it
 ```php
 if ($form->isVasValidate() && $form->isAttributeValid('attribute') == false) {
     echo $form->getFirstErrorForAttribute("attribute")
@@ -726,7 +732,7 @@ if ($form->isVasValidate() && $form->isAttributeValid('attribute') == false) {
 public function isVasValidated(): bool
 ```
 
-Return answer on question: is form was validated before?
+Return the answer on the question: has the form been validated before?
 
 ```php
 /**
@@ -747,11 +753,13 @@ Methods isValid() and isAttributeValid() always return false before you call val
 ----------------------
 
 To do:
+- string len
 - test in rule with \Traversable
 - id? unsigned int 
 - array
 - associated array
 - array of accosted arrays
 - additional options in self rules
-- think about split int and float on different validators vis its works with different types
+- think about splitting int and float into different validators is it works with different types
 - think about static cache of fields validation state in validator for speed up 
+- isVasValidated -> isItValidated
